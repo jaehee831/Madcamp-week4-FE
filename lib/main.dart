@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
+import 'package:madcamp_week4_front/signup_role_select.dart';
 import 'conditional_import.dart';
 
 void main() {
@@ -36,9 +37,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Flutter Demo Home Page'),
-      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -54,9 +52,18 @@ class _MyHomePageState extends State<MyHomePage> {
                     _profileImageUrl = profileImageUrl;
                     _nickname = nickname;
                   });
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SignUpRoleSelect(
+                        profileImageUrl: _profileImageUrl,
+                        nickname: _nickname,
+                      ),
+                    ),
+                  );
                 });
               },
-              child: Text('카카오 로그인'),
+              child: const Text('카카오 로그인'),
             ),
           ],
         ),

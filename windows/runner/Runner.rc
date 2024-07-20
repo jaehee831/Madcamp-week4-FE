@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "madcamp_week4" "\0"
+            VALUE "FileDescription", "madcamp_week4_front" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "madcamp_week4" "\0"
+            VALUE "InternalName", "madcamp_week4_front" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2024 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "madcamp_week4.exe" "\0"
-            VALUE "ProductName", "madcamp_week4" "\0"
+            VALUE "OriginalFilename", "madcamp_week4_front.exe" "\0"
+            VALUE "ProductName", "madcamp_week4_front" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

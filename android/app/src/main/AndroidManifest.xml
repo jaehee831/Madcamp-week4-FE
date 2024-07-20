@@ -1,8 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.myapp">
+    package="com.example.madcamp_week4_front">
 
     <application
-        android:label="madcamp_week4"
+        android:label="madcamp_week4_front"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
 
