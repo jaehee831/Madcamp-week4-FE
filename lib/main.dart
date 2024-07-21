@@ -5,8 +5,9 @@ import 'package:madcamp_week4_front/signup_role_select.dart';
 import 'conditional_import.dart';
 import 'package:mysql_client/mysql_client.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Flutter binding 초기화
+  
   try {
     await dbConnector().timeout(Duration(seconds: 5), onTimeout: () {
       throw TimeoutException("MySQL 연결 시간 초과");
@@ -24,11 +25,11 @@ Future<void> dbConnector() async {
     try {
     // MySQL 접속 설정
     final conn = await MySQLConnection.createConnection(
-      host: '143.248.191.160',
-      port: 3306,
-      userName: 'root',
-      password: 'wogml0913!',
-      databaseName: 'mydb', // optional
+      host: '',
+      port: ,
+      userName: '',
+      password: '',
+      databaseName: '', // optional
     );
 
     // 연결 대기

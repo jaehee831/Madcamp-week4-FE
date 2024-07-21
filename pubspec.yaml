@@ -44,7 +44,7 @@ dependencies:
 
   sqflite: ^2.2.8
   mysql_client: ^0.0.27
-
+  
   kakao_flutter_sdk_user: any
 dev_dependencies:
   flutter_test:
@@ -99,4 +99,6 @@ flutter:
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
 
+  assets:
+    - .env
   
