@@ -4,12 +4,12 @@ import 'dart:math';
 import 'homepage.dart';
 
 class SignupOwner extends StatefulWidget {
-  final String profileImageUrl;
+  final int userId;
   final String nickname;
 
   const SignupOwner({
     super.key,
-    required this.profileImageUrl,
+    required this.userId,
     required this.nickname,
   });
 

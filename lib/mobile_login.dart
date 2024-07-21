@@ -1,7 +1,7 @@
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:flutter/services.dart';
 
-Future<void> loginWithKakao({Function(String, String)? onProfileFetched}) async {
+Future<void> loginWithKakao({Function(int, String)? onProfileFetched}) async {
   try {
     if (await isKakaoTalkInstalled()) {
       try {
@@ -18,7 +18,7 @@ Future<void> loginWithKakao({Function(String, String)? onProfileFetched}) async 
           print('카카오계정으로 로그인 성공');
           await fetchProfile(onProfileFetched);
         } catch (error) {
-          print('카카오계정으로 로그인 실패 $error');
+          print('카카오계정으로 로그인 실패 $error'); 
         }
       }
     } else {
@@ -30,18 +30,20 @@ Future<void> loginWithKakao({Function(String, String)? onProfileFetched}) async 
         print('카카오계정으로 로그인 실패 $error');
       }
     }
+    // 서버에 사용자 ID 전송
+    // await _sendUserIdToServer(_userId);
   } catch (error) {
     print('카카오 로그인 중 오류 발생 $error');
   }
 }
 
-Future<void> fetchProfile(Function(String, String)? onProfileFetched) async {
+Future<void> fetchProfile(Function(int, String)? onProfileFetched) async {
   try {
     User user = await UserApi.instance.me();
-    String profileImageUrl = user.kakaoAccount?.profile?.profileImageUrl ?? '';
+    int userId = user.id;
     String nickname = user.kakaoAccount?.profile?.nickname ?? '';
     if (onProfileFetched != null) {
-      onProfileFetched(profileImageUrl, nickname);
+      onProfileFetched(userId, nickname);
     }
     print('사용자 프로필 가져오기 성공');
   } catch (error) {

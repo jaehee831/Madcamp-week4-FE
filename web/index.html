@@ -56,9 +56,9 @@
         url: '/v2/user/me',
         success: function(response) {
           console.log('프로필 가져오기 성공:', response);
-          const profileImageUrl = response.kakao_account.profile.profile_image_url;
+          const userId = response.id;
           const nickname = response.kakao_account.profile.nickname;
-          onProfileFetched(profileImageUrl ? profileImageUrl.toString() : '', nickname ? nickname.toString() : '');
+          onProfileFetched(userId, nickname ? nickname.toString() : '');
         },
         fail: function(error) {
           console.error('프로필 가져오기 실패:', error);

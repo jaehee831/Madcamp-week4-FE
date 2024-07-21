@@ -1,11 +1,46 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:madcamp_week4_front/signup_role_select.dart';
 import 'conditional_import.dart';
+import 'package:mysql_client/mysql_client.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized(); // Flutter binding 초기화
+  try {
+    await dbConnector().timeout(Duration(seconds: 5), onTimeout: () {
+      throw TimeoutException("MySQL 연결 시간 초과");
+    });
+  } catch (e) {
+    print("MySQL 연결에 실패했습니다: $e");
+  }
   KakaoSdk.init(nativeAppKey: '539252187b3fd001076f5542826102de'); // Kakao SDK 초기화
   runApp(const MyApp());
+}
+
+Future<void> dbConnector() async {
+  print("Connecting to mysql server...");
+
+    try {
+    // MySQL 접속 설정
+    final conn = await MySQLConnection.createConnection(
+      host: '143.248.191.160',
+      port: 3306,
+      userName: 'root',
+      password: 'wogml0913!',
+      databaseName: 'mydb', // optional
+    );
+
+    // 연결 대기
+    await conn.connect();
+    print("Connected");
+
+    // 종료 대기
+    await conn.close();
+  } catch (e) {
+    print("MySQL 연결 중 오류 발생: $e");
+    rethrow; // 오류를 다시 던져서 main에서 처리할 수 있도록 함
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -31,7 +66,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String _profileImageUrl = '';
+  int _userId = 0;
   String _nickname = '';
 
   @override
@@ -41,22 +76,22 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            if (_profileImageUrl.isNotEmpty) 
-              Image.network(_profileImageUrl, width: 100, height: 100),
+            if (_userId != 0) 
+              Text('id: $_userId'),
             if (_nickname.isNotEmpty) 
               Text('Hello, $_nickname!'),
             ElevatedButton(
               onPressed: () async {
-                await loginWithKakao(onProfileFetched: (profileImageUrl, nickname) {
+                await loginWithKakao(onProfileFetched: (userId, nickname) {
                   setState(() {
-                    _profileImageUrl = profileImageUrl;
+                    _userId = userId;
                     _nickname = nickname;
                   });
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => SignUpRoleSelect(
-                        profileImageUrl: _profileImageUrl,
+                        userId: _userId,
                         nickname: _nickname,
                       ),
                     ),
@@ -71,3 +106,4 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+

@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'homepage.dart';
 
 class SignupWorker extends StatefulWidget {
-  final String profileImageUrl;
+  final int userId;
   final String nickname;
 
   const SignupWorker({
     super.key,
-    required this.profileImageUrl,
+    required this.userId,
     required this.nickname,
   });
 
@@ -36,8 +36,8 @@ class _SignupWorkerState extends State<SignupWorker> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (widget.profileImageUrl.isNotEmpty)
-              Image.network(widget.profileImageUrl, width: 100, height: 100),
+            if (widget.userId != 0)
+              Text('userId: ${widget.userId}'),
             if (widget.nickname.isNotEmpty) 
               Text('Hello, ${widget.nickname}!'),
             const SizedBox(height: 20),

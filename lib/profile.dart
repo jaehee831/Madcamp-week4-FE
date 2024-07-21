@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:madcamp_week4_front/channel_delete.dart';
-import 'admin.dart';
+import 'package:madcamp_week4_front/admin/channel_delete.dart';
+import 'admin/admin.dart';
 
 class Profile extends StatelessWidget {
   const Profile({super.key});

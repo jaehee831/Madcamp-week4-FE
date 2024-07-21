@@ -3,12 +3,12 @@ import 'signup_worker.dart';
 import 'signup_owner.dart';
 
 class SignUpRoleSelect extends StatelessWidget {
-  final String profileImageUrl;
+  final int userId;
   final String nickname;
 
   const SignUpRoleSelect({
     super.key,
-    required this.profileImageUrl,
+    required this.userId,
     required this.nickname,
   });
 
@@ -27,7 +27,7 @@ class SignUpRoleSelect extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => SignupWorker(profileImageUrl: profileImageUrl, nickname: nickname),
+                    builder: (context) => SignupWorker(userId: userId, nickname: nickname),
                   ),
                 );
               },
@@ -42,7 +42,7 @@ class SignUpRoleSelect extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => SignupOwner(profileImageUrl: profileImageUrl, nickname: nickname),
+                    builder: (context) => SignupOwner(userId: userId, nickname: nickname),
                   ),
                 );
               },
