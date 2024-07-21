@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:madcamp_week4_front/admin/channel_delete.dart';
-import 'admin/admin.dart';
+import 'package:madcamp_week4_front/admin/admin.dart';
 
-class Profile extends StatelessWidget {
-  const Profile({super.key});
+class AdminProfile extends StatelessWidget {
+  const AdminProfile({super.key});
 
   @override
   Widget build(BuildContext context) {

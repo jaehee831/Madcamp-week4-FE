@@ -30,8 +30,6 @@ Future<void> loginWithKakao({Function(int, String)? onProfileFetched}) async {
         print('카카오계정으로 로그인 실패 $error');
       }
     }
-    // 서버에 사용자 ID 전송
-    // await _sendUserIdToServer(_userId);
   } catch (error) {
     print('카카오 로그인 중 오류 발생 $error');
   }

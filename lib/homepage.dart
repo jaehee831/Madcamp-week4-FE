@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'profile.dart';
+import 'package:madcamp_week4_front/admin/admin_profile.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -20,9 +20,9 @@ class HomePage extends StatelessWidget {
             icon: const Icon(Icons.person),
             onPressed: () {
               Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const Profile()),
-                );
+                context,
+                MaterialPageRoute(builder: (context) => const AdminProfile()),
+              );
             },
           ),
         ],

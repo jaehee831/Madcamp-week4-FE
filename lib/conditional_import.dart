@@ -1,1 +1,1 @@
-export 'web_login.dart' if (dart.library.js) 'web_login.dart' if (dart.library.io) 'mobile_login.dart';
+export 'signup/web_login.dart' if (dart.library.js) 'signup/web_login.dart' if (dart.library.io) 'signup/mobile_login.dart';
