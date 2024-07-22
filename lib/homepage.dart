@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:madcamp_week4_front/admin/admin_profile.dart';
 import 'salary_details_page.dart'; // Import the new screen
 import 'homepage_no_store_worker.dart'; // Ensure this import is correct based on your project structure
+import 'channel_board_page.dart'; // Import the new channel board page
 
 class HomePage extends StatelessWidget {
   final int userId;
@@ -16,33 +17,30 @@ class HomePage extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('채널 변경'),
-          content: SizedBox(
+          title: Text('채널 변경'),
+          content: Container(
             width: double.minPositive,
             child: ListView(
               shrinkWrap: true,
               children: [
                 ListTile(
-                  title: const Text('버거킹 공동점'),
+                  title: Text('버거킹 공동점'),
                   onTap: () {
                     // 채널 변경 로직 추가
                   },
                 ),
                 ListTile(
-                  title: const Text('엔제리너스 어은점'),
+                  title: Text('엔제리너스 어은점'),
                   onTap: () {
                     // 채널 변경 로직 추가
                   },
                 ),
                 ListTile(
-                  title: const Text('+ 채널 추가하기'),
+                  title: Text('+ 채널 추가하기'),
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                          builder: (context) => HomepageNoStoreWorker(
-                              userId:
-                                  userId)), // Make sure the import is correct
+                      MaterialPageRoute(builder: (context) => HomepageNoStoreWorker(userId: userId)), // Make sure the import is correct
                     );
                   },
                 ),
@@ -51,7 +49,7 @@ class HomePage extends StatelessWidget {
           ),
           actions: [
             TextButton(
-              child: const Text('닫기'),
+              child: Text('닫기'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -59,6 +57,15 @@ class HomePage extends StatelessWidget {
           ],
         );
       },
+    );
+  }
+
+  void _navigateToChannelBoard(BuildContext context, String channelName) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ChannelBoardPage(channelName: channelName),
+      ),
     );
   }
 
@@ -81,8 +88,7 @@ class HomePage extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                    builder: (context) => AdminProfile(userId: userId)),
+                MaterialPageRoute(builder: (context) => AdminProfile(userId: userId)),
               );
             },
           ),
@@ -98,7 +104,7 @@ class HomePage extends StatelessWidget {
               ),
               child: GestureDetector(
                 onTap: () => _showChannelChangePopup(context),
-                child: const Row(
+                child: Row(
                   children: [
                     Icon(Icons.swap_horiz),
                     SizedBox(width: 8.0),
@@ -114,43 +120,35 @@ class HomePage extends StatelessWidget {
               ),
             ),
             ListTile(
-              leading: const Icon(Icons.announcement),
-              title: const Text('공지방'),
-              onTap: () {
-                // 공지방 클릭 시 동작 추가
-              },
+              leading: Icon(Icons.announcement),
+              title: Text('공지방'),
+              onTap: () => _navigateToChannelBoard(context, '공지방'),
             ),
             ListTile(
-              leading: const Icon(Icons.group),
-              title: const Text('인수인계방'),
-              onTap: () {
-                // 인수인계방 클릭 시 동작 추가
-              },
+              leading: Icon(Icons.group),
+              title: Text('인수인계방'),
+              onTap: () => _navigateToChannelBoard(context, '인수인계방'),
             ),
             ListTile(
-              leading: const Icon(Icons.chat),
-              title: const Text('잡담방'),
-              onTap: () {
-                // 잡담방 클릭 시 동작 추가
-              },
+              leading: Icon(Icons.chat),
+              title: Text('잡담방'),
+              onTap: () => _navigateToChannelBoard(context, '잡담방'),
             ),
             ListTile(
-              leading: const Icon(Icons.help),
-              title: const Text('대타구하기방'),
-              onTap: () {
-                // 대타구하기방 클릭 시 동작 추가
-              },
+              leading: Icon(Icons.help),
+              title: Text('대타구하기방'),
+              onTap: () => _navigateToChannelBoard(context, '대타구하기방'),
             ),
             ListTile(
-              leading: const Icon(Icons.add),
-              title: const Text('방 추가하기'),
+              leading: Icon(Icons.add),
+              title: Text('방 추가하기'),
               onTap: () {
                 // 방 추가하기 클릭 시 동작 추가
               },
             ),
             ListTile(
-              leading: const Icon(Icons.logout),
-              title: const Text('로그아웃'),
+              leading: Icon(Icons.logout),
+              title: Text('로그아웃'),
               onTap: () {
                 // 로그아웃 클릭 시 동작 추가
               },
@@ -224,9 +222,7 @@ class HomePage extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              SalaryDetailsPage()), // Navigate to the new screen
+                      MaterialPageRoute(builder: (context) => SalaryDetailsPage()), // Navigate to the new screen
                     );
                   },
                   child: const Text('더보기'),
