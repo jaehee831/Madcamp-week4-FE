@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 
 class WorkerProfile extends StatelessWidget {
-  const WorkerProfile({super.key});
+  final userId;
+
+  const WorkerProfile({
+    super.key,
+    required this.userId
+  });
 
   @override
   Widget build(BuildContext context) {

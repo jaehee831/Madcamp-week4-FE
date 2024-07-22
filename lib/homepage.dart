@@ -2,7 +2,9 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:madcamp_week4_front/admin/admin_profile.dart';
-import 'package:madcamp_week4_front/salary_details_page.dart';
+import 'package:madcamp_week4_front/worker_profile.dart';
+import 'package:madcamp_week4_front/worker_salary.dart';
+import 'package:madcamp_week4_front/schedule.dart';
 
 class HomePage extends StatefulWidget {
   final int userId;
@@ -18,7 +20,7 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 class _HomePageState extends State<HomePage> {
-  late String storeName;
+  late String storeName = '';
 
   @override
   void initState() {
@@ -41,10 +43,7 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             icon: const Icon(Icons.person),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => AdminProfile(userId: widget.userId)),
-              );
+              _onPersonPressed(widget.userId);
             },
           ),
         ],
@@ -83,7 +82,10 @@ class _HomePageState extends State<HomePage> {
                 ),
                 TextButton(
                   onPressed: () {
-                    // 더보기 버튼 동작 추가
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Schedule(userId: widget.userId, storeId: widget.storeId))
+                    );
                   },
                   child: const Text('더보기'),
                 ),
@@ -115,7 +117,7 @@ class _HomePageState extends State<HomePage> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => SalaryDetailsPage()), // Navigate to the new screen
+                      MaterialPageRoute(builder: (context) => WorkerSalary()), // Navigate to the new screen
                     );
                   },
                   child: const Text('더보기'),
@@ -158,6 +160,21 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void _onPersonPressed(int userId) async {
+    bool isAdmin = await _checkIsAdmin(userId);
+    if(isAdmin){
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => AdminProfile(userId: userId)),
+      );
+    }else{
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => WorkerProfile(userId: userId)),
+      );
+    }
+  }
+
   Future<void> _getStoreName(int storeId) async {
     final url = Uri.parse('http://143.248.191.173:3001/get_store_name_list');
     final response = await http.post(
@@ -172,6 +189,24 @@ class _HomePageState extends State<HomePage> {
       });
     } else {
       throw Exception('Failed to load store name. Status code: ${response.statusCode}');
+    }
+  }
+
+  Future<bool> _checkIsAdmin(int userId) async {
+    final url = Uri.parse('http://143.248.191.173:3001/check_isadmin');
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'user_id': userId}),
+    );
+    if (response.statusCode == 200) {
+      if(jsonDecode(response.body) == 1){
+        return true;
+      }else{
+        return false;
+      }
+    } else {
+      throw Exception('Failed to check if user is admin. Status code: ${response.statusCode}');
     }
   }
 }

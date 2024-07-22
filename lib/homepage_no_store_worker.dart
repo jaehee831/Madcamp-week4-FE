@@ -22,7 +22,7 @@ class HomepageNoStoreWorker extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const WorkerProfile()),
+                  MaterialPageRoute(builder: (context) => WorkerProfile(userId: userId)),
                 );
             },
           ),
