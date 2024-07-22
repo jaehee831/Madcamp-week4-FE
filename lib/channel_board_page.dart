@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'write_post_page.dart'; // Import the new write post page
+import 'post_detail_page.dart'; // Import the new post detail page
+import 'write_post_page.dart';
 
 class ChannelBoardPage extends StatelessWidget {
   final String channelName;
@@ -26,62 +27,94 @@ class ChannelBoardPage extends StatelessWidget {
               style: TextStyle(fontSize: 16.0, color: Colors.grey),
             ),
             const SizedBox(height: 16.0),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '7/19 월요일 오후 4시~7시 대타 구해요!',
-                    style: TextStyle(fontSize: 16.0),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PostDetailPage(
+                      postTitle: '7/19 월요일 오후 4시~7시 대타 구해요!',
+                      postContent: '저는 화요일 같은 타임 가능합니다.',
+                      author: '승락함',
+                      timestamp: '57분 전',
+                      likes: 4,
+                      comments: 4,
+                    ),
                   ),
-                  const SizedBox(height: 8.0),
-                  Text(
-                    '저는 화요일 같은 타임 가능합니다.',
-                    style: TextStyle(fontSize: 14.0, color: Colors.grey),
-                  ),
-                  const SizedBox(height: 8.0),
-                  Row(
-                    children: [
-                      Icon(Icons.favorite, size: 16.0, color: Colors.grey),
-                      const SizedBox(width: 4.0),
-                      Text('4'),
-                      const SizedBox(width: 16.0),
-                      Icon(Icons.comment, size: 16.0, color: Colors.grey),
-                      const SizedBox(width: 4.0),
-                      Text('4'),
-                      const SizedBox(width: 16.0),
-                      Text('승락함'),
-                      const SizedBox(width: 16.0),
-                      Text('57분 전'),
-                    ],
-                  ),
-                ],
+                );
+              },
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '7/19 월요일 오후 4시~7시 대타 구해요!',
+                      style: TextStyle(fontSize: 16.0),
+                    ),
+                    const SizedBox(height: 8.0),
+                    Text(
+                      '저는 화요일 같은 타임 가능합니다.',
+                      style: TextStyle(fontSize: 14.0, color: Colors.grey),
+                    ),
+                    const SizedBox(height: 8.0),
+                    Row(
+                      children: [
+                        Icon(Icons.favorite, size: 16.0, color: Colors.grey),
+                        const SizedBox(width: 4.0),
+                        Text('4'),
+                        const SizedBox(width: 16.0),
+                        Icon(Icons.comment, size: 16.0, color: Colors.grey),
+                        const SizedBox(width: 4.0),
+                        Text('4'),
+                        const SizedBox(width: 16.0),
+                        Text('승락함'),
+                        const SizedBox(width: 16.0),
+                        Text('57분 전'),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 16.0),
             // 다른 게시글들을 위한 더미 컨테이너들
-            Container(
-              width: double.infinity,
-              height: 100.0,
-              color: Colors.grey[200],
+            GestureDetector(
+              onTap: () {
+                // 다른 더미 게시글들을 누르면 동작할 코드
+              },
+              child: Container(
+                width: double.infinity,
+                height: 100.0,
+                color: Colors.grey[200],
+              ),
             ),
             const SizedBox(height: 8.0),
-            Container(
-              width: double.infinity,
-              height: 100.0,
-              color: Colors.grey[200],
+            GestureDetector(
+              onTap: () {
+                // 다른 더미 게시글들을 누르면 동작할 코드
+              },
+              child: Container(
+                width: double.infinity,
+                height: 100.0,
+                color: Colors.grey[200],
+              ),
             ),
             const SizedBox(height: 8.0),
-            Container(
-              width: double.infinity,
-              height: 100.0,
-              color: Colors.grey[200],
+            GestureDetector(
+              onTap: () {
+                // 다른 더미 게시글들을 누르면 동작할 코드
+              },
+              child: Container(
+                width: double.infinity,
+                height: 100.0,
+                color: Colors.grey[200],
+              ),
             ),
           ],
         ),
