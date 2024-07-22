@@ -2,6 +2,9 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:madcamp_week4_front/admin/admin_profile.dart';
+import 'salary_details_page.dart'; // Import the new screen
+import 'homepage_no_store_worker.dart'; // Ensure this import is correct based on your project structure
+import 'channel_board_page.dart'; // Import the new channel board page
 import 'package:madcamp_week4_front/worker_profile.dart';
 import 'package:madcamp_week4_front/worker_salary.dart';
 import 'package:madcamp_week4_front/schedule.dart';
@@ -19,6 +22,7 @@ class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
 }
+
 class _HomePageState extends State<HomePage> {
   late String storeName = '';
 
@@ -28,16 +32,75 @@ class _HomePageState extends State<HomePage> {
     _getStoreName(widget.storeId);
   }
 
+  void _showChannelChangePopup(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('채널 변경'),
+          content: Container(
+            width: double.minPositive,
+            child: ListView(
+              shrinkWrap: true,
+              children: [
+                ListTile(
+                  title: Text('버거킹 공동점'),
+                  onTap: () {
+                    // 채널 변경 로직 추가
+                  },
+                ),
+                ListTile(
+                  title: Text('엔제리너스 어은점'),
+                  onTap: () {
+                    // 채널 변경 로직 추가
+                  },
+                ),
+                ListTile(
+                  title: Text('+ 채널 추가하기'),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => HomepageNoStoreWorker(userId: widget.userId)), // Make sure the import is correct
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              child: Text('닫기'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _navigateToChannelBoard(BuildContext context, String channelName) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ChannelBoardPage(channelName: channelName),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(storeName),
-        leading: IconButton(
-          icon: const Icon(Icons.menu),
-          onPressed: () {
-            // 메뉴 버튼 동작 추가
-          },
+        leading: Builder(
+          builder: (context) => IconButton(
+            icon: const Icon(Icons.menu),
+            onPressed: () {
+              Scaffold.of(context).openDrawer();
+            },
+          ),
         ),
         actions: [
           IconButton(
@@ -47,6 +110,68 @@ class _HomePageState extends State<HomePage> {
             },
           ),
         ],
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+              ),
+              child: GestureDetector(
+                onTap: () => _showChannelChangePopup(context),
+                child: Row(
+                  children: [
+                    Icon(Icons.swap_horiz),
+                    SizedBox(width: 8.0),
+                    Text(
+                      '채널 변경',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 24,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.announcement),
+              title: Text('공지방'),
+              onTap: () => _navigateToChannelBoard(context, '공지방'),
+            ),
+            ListTile(
+              leading: Icon(Icons.group),
+              title: Text('인수인계방'),
+              onTap: () => _navigateToChannelBoard(context, '인수인계방'),
+            ),
+            ListTile(
+              leading: Icon(Icons.chat),
+              title: Text('잡담방'),
+              onTap: () => _navigateToChannelBoard(context, '잡담방'),
+            ),
+            ListTile(
+              leading: Icon(Icons.help),
+              title: Text('대타구하기방'),
+              onTap: () => _navigateToChannelBoard(context, '대타구하기방'),
+            ),
+            ListTile(
+              leading: Icon(Icons.add),
+              title: Text('방 추가하기'),
+              onTap: () {
+                // 방 추가하기 클릭 시 동작 추가
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.logout),
+              title: Text('로그아웃'),
+              onTap: () {
+                // 로그아웃 클릭 시 동작 추가
+              },
+            ),
+          ],
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -117,7 +242,7 @@ class _HomePageState extends State<HomePage> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => WorkerSalary()), // Navigate to the new screen
+                      MaterialPageRoute(builder: (context) => SalaryDetailsPage()), // Navigate to the new screen
                     );
                   },
                   child: const Text('더보기'),
