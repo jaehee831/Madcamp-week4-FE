@@ -1,4 +1,6 @@
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'dart:convert';
 import 'package:madcamp_week4_front/homepage.dart';
 import 'package:madcamp_week4_front/worker_profile.dart';
 
@@ -114,14 +116,68 @@ class _ChannelAddState extends State<ChannelAdd> {
     );
   }
 
-  void _onSubmit() {
+  void _onSubmit() async {
     String password = _passwordController.text;
-    // 여기서 서버로 비밀번호를 보내고 확인할 수 있습니다.
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => HomePage(userId: widget.userId), // HomePage로 이동
-      ),
+    try {
+      int storeId = await _getStoreIdFromPassword(password);
+      bool success = await _saveUserStore(widget.userId, storeId);
+      if (success) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HomePage(userId: widget.userId),
+          ),
+        );
+      } else {
+        _showErrorDialog('채널 등록에 실패했습니다.');
+      }
+    } catch (e) {
+      _showErrorDialog('오류 발생: $e');
+    }
+  }
+
+  Future<int> _getStoreIdFromPassword(String password) async {
+    final url = Uri.parse('http://143.248.191.173:3001/get_store_id');
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json; charset=UTF-8'},
+      body: jsonEncode({'password': password}),
+    );
+    if (response.statusCode == 200) {
+      final responseBody = jsonDecode(response.body);
+      return responseBody['idstores'];
+    } else {
+      throw Exception('Failed to get store ID');
+    }
+  }
+
+  Future<bool> _saveUserStore(int userId, int storeId) async {
+    final url = Uri.parse('http://143.248.191.173:3001/save_user_store');
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json; charset=UTF-8'},
+      body: jsonEncode({'user_id': userId.toString(), 'store_id': storeId.toString()}),
+    );
+    return response.statusCode == 200;
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('오류'),
+          content: Text(message),
+          actions: [
+            TextButton(
+              child: Text('확인'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 

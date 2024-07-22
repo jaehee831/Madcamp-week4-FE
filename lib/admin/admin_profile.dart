@@ -126,7 +126,7 @@ class _AdminProfileState extends State<AdminProfile> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const Admin()),
+                      MaterialPageRoute(builder: (context) => Admin(userId: widget.userId)),
                     );
                   },
                   child: const Text('관리하기'),
@@ -222,6 +222,7 @@ class _AdminProfileState extends State<AdminProfile> {
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'user_id': userId}),
     );
     if (response.statusCode == 200) {
       final responseBody = jsonDecode(response.body);

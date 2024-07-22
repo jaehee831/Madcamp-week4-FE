@@ -27,11 +27,11 @@ Future<void> dbConnector() async {
     try {
     // MySQL 접속 설정
     final conn = await MySQLConnection.createConnection(
-      host: '',
-      port: ,
-      userName: '',
-      password: '',
-      databaseName: '', // optional
+      host: '143.248.191.173',
+      port: 3306,
+      userName: 'root',
+      password: 'wogml0913!',
+      databaseName: 'mydb', // optional
     );
 
     // 연결 대기

@@ -85,7 +85,7 @@ class SignupStoreRegister extends StatefulWidget {
 
 class _SignupStoreRegisterState extends State<SignupStoreRegister> {
   late String randomKey;
-  late String storeId;
+  late int storeId;
 
   @override
   void initState() {
@@ -96,7 +96,7 @@ class _SignupStoreRegisterState extends State<SignupStoreRegister> {
   Future<void> _processStoreRegistration() async {
     await _saveStore();
     await _getStoreIdFromPassword(randomKey);
-    await _saveOwnerStore(storeId.toString());
+    await _saveOwnerStore(storeId);
     setState(() {});
   }
 
@@ -111,7 +111,7 @@ class _SignupStoreRegisterState extends State<SignupStoreRegister> {
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, String>{
-        'name': widget.storeName,
+        'store_name': widget.storeName,
         'password': randomKey
       })
     );
@@ -131,26 +131,32 @@ class _SignupStoreRegisterState extends State<SignupStoreRegister> {
       },
       body: jsonEncode(<String, String>{
         'password': password
-      })
+      }),
     );
+    print('Response Body: ${response.body}');
     if (response.statusCode == 200) {
       final responseBody = response.body;
-      storeId = jsonDecode(responseBody)['idstores'];
-      print('Store ID: $storeId');
+      final decodedResponse = jsonDecode(responseBody);
+      if (decodedResponse.containsKey('idstores')) {
+        storeId = decodedResponse['idstores'];
+        print('Store ID: $storeId');
+      } else {
+        print('Error: idstores key not found in response');
+      }
     } else {
-      print('Failed to get Store ID');
+      print('Failed to get Store ID: ${response.statusCode}');
     }
   }
 
-  Future<void> _saveOwnerStore(String storeId) async {
+  Future<void> _saveOwnerStore(int storeId) async {
     final url = Uri.parse('http://143.248.191.173:3001/save_user_store');
     final response = await http.post(
       url,
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode(<String, String>{
-        'user_id': widget.userId.toString(),
+      body: jsonEncode(<String, int>{
+        'user_id': widget.userId,
         'store_id': storeId
       })
     );

@@ -1,8 +1,5 @@
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:madcamp_week4_front/homepage.dart';
 import 'package:madcamp_week4_front/homepage_no_store_worker.dart';
-import 'dart:convert';
 
 class SignupWorker extends StatefulWidget {
   final int userId;
@@ -69,39 +66,10 @@ class _SignupWorkerState extends State<SignupWorker> {
   }
 
   void _onConfirmPressed() {
-    _checkUserRegisterStore(widget.userId);
-  }
-
-  Future<void> _checkUserRegisterStore(int userId) async {
-    final url = Uri.parse('http://143.248.191.173:3001/check_user_register_store');
-    final response = await http.post(
-      url,
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, String>{
-        'user_id': userId.toString(),
-      }),
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => HomepageNoStoreWorker(userId: widget.userId))
     );
-    if (response.statusCode == 200) {
-      final responseBody = jsonDecode(response.body);
-      if (responseBody.containsKey('storeIds')) {
-        final List<dynamic> storeIds = responseBody['storeIds'];
-        print('Store IDs: $storeIds');
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => HomePage(userId: userId)),
-        );
-      } else {
-        print('No store registered');
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => HomepageNoStoreWorker(userId: userId)),
-        );
-      }
-    } else {
-      print('Failed to check if user registers any stores. Status code: ${response.statusCode}');
-    }
   }
 
 }

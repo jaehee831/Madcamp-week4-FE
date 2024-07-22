@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:madcamp_week4_front/admin/admin_profile.dart';
+import 'package:madcamp_week4_front/salary_details_page.dart';
 
 class HomePage extends StatelessWidget {
   final int userId;
@@ -96,7 +97,10 @@ class HomePage extends StatelessWidget {
                 ),
                 TextButton(
                   onPressed: () {
-                    // 더보기 버튼 동작 추가
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => SalaryDetailsPage()), // Navigate to the new screen
+                    );
                   },
                   child: const Text('더보기'),
                 ),

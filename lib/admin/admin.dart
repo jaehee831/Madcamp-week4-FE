@@ -5,7 +5,12 @@ import 'admin_notice.dart';
 import 'admin_schedule.dart';
 
 class Admin extends StatelessWidget {
-  const Admin({super.key});
+  final int userId;
+
+  const Admin({
+    super.key,
+    required this.userId
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +40,7 @@ class Admin extends StatelessWidget {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const AdminSchedule()),
+                MaterialPageRoute(builder: (context) => scheduleChooseStore(userId: userId)),
               );
             },
           ),
