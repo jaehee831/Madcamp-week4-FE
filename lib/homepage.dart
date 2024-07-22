@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:madcamp_week4_front/admin/admin_profile.dart';
 import 'salary_details_page.dart'; // Import the new screen
+import 'homepage_no_store_worker.dart'; // Ensure this import is correct based on your project structure
 
 class HomePage extends StatelessWidget {
   final int userId;
@@ -9,6 +10,57 @@ class HomePage extends StatelessWidget {
     super.key,
     required this.userId,
   });
+
+  void _showChannelChangePopup(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('채널 변경'),
+          content: SizedBox(
+            width: double.minPositive,
+            child: ListView(
+              shrinkWrap: true,
+              children: [
+                ListTile(
+                  title: const Text('버거킹 공동점'),
+                  onTap: () {
+                    // 채널 변경 로직 추가
+                  },
+                ),
+                ListTile(
+                  title: const Text('엔제리너스 어은점'),
+                  onTap: () {
+                    // 채널 변경 로직 추가
+                  },
+                ),
+                ListTile(
+                  title: const Text('+ 채널 추가하기'),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => HomepageNoStoreWorker(
+                              userId:
+                                  userId)), // Make sure the import is correct
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              child: const Text('닫기'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,11 +96,20 @@ class HomePage extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.grey[300],
               ),
-              child: const Text(
-                '채널 변경',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 24,
+              child: GestureDetector(
+                onTap: () => _showChannelChangePopup(context),
+                child: const Row(
+                  children: [
+                    Icon(Icons.swap_horiz),
+                    SizedBox(width: 8.0),
+                    Text(
+                      '채널 변경',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 24,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
