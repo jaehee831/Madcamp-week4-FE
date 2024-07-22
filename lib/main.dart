@@ -9,29 +9,30 @@ import 'package:mysql_client/mysql_client.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Flutter binding 초기화
-  
+
   try {
-    await dbConnector().timeout(Duration(seconds: 5), onTimeout: () {
+    await dbConnector().timeout(const Duration(seconds: 5), onTimeout: () {
       throw TimeoutException("MySQL 연결 시간 초과");
     });
   } catch (e) {
     print("MySQL 연결에 실패했습니다: $e");
   }
-  KakaoSdk.init(nativeAppKey: '539252187b3fd001076f5542826102de'); // Kakao SDK 초기화
+  KakaoSdk.init(
+      nativeAppKey: '539252187b3fd001076f5542826102de'); // Kakao SDK 초기화
   runApp(const MyApp());
 }
 
 Future<void> dbConnector() async {
   print("Connecting to mysql server...");
 
-    try {
+  try {
     // MySQL 접속 설정
     final conn = await MySQLConnection.createConnection(
-      host: '',
-      port: ,
-      userName: '',
-      password: '',
-      databaseName: '', // optional
+      host: '10.0.2.2',
+      port: 3306,
+      userName: 'root',
+      password: 'wogml0913!',
+      databaseName: 'mydb', // optional
     );
 
     // 연결 대기
@@ -79,10 +80,8 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            if (_userId != 0) 
-              Text('id: $_userId'),
-            if (_nickname.isNotEmpty) 
-              Text('Hello, $_nickname!'),
+            if (_userId != 0) Text('id: $_userId'),
+            if (_nickname.isNotEmpty) Text('Hello, $_nickname!'),
             ElevatedButton(
               onPressed: () async {
                 await loginWithKakao(onProfileFetched: (userId, nickname) {
@@ -92,14 +91,13 @@ class _MyHomePageState extends State<MyHomePage> {
                   });
                   Navigator.push(
                     context,
-                    
                     MaterialPageRoute(
                       builder: (context) => SignUpRoleSelect(
                         userId: _userId,
                         nickname: _nickname,
                       ),
                     ),
-                    
+
                     /*
                     // test
                     MaterialPageRoute(
@@ -117,4 +115,3 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
-

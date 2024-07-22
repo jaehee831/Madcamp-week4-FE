@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:madcamp_week4_front/admin/admin_profile.dart';
+import 'salary_details_page.dart'; // Import the new screen
 
 class HomePage extends StatelessWidget {
   final int userId;
@@ -14,11 +15,13 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('롯데리아 어은점'),
-        leading: IconButton(
-          icon: const Icon(Icons.menu),
-          onPressed: () {
-            // 메뉴 버튼 동작 추가
-          },
+        leading: Builder(
+          builder: (context) => IconButton(
+            icon: const Icon(Icons.menu),
+            onPressed: () {
+              Scaffold.of(context).openDrawer();
+            },
+          ),
         ),
         actions: [
           IconButton(
@@ -26,11 +29,73 @@ class HomePage extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => AdminProfile(userId: userId)),
+                MaterialPageRoute(
+                    builder: (context) => AdminProfile(userId: userId)),
               );
             },
           ),
         ],
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+              ),
+              child: const Text(
+                '채널 변경',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 24,
+                ),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.announcement),
+              title: const Text('공지방'),
+              onTap: () {
+                // 공지방 클릭 시 동작 추가
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.group),
+              title: const Text('인수인계방'),
+              onTap: () {
+                // 인수인계방 클릭 시 동작 추가
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.chat),
+              title: const Text('잡담방'),
+              onTap: () {
+                // 잡담방 클릭 시 동작 추가
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.help),
+              title: const Text('대타구하기방'),
+              onTap: () {
+                // 대타구하기방 클릭 시 동작 추가
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.add),
+              title: const Text('방 추가하기'),
+              onTap: () {
+                // 방 추가하기 클릭 시 동작 추가
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.logout),
+              title: const Text('로그아웃'),
+              onTap: () {
+                // 로그아웃 클릭 시 동작 추가
+              },
+            ),
+          ],
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -96,7 +161,12 @@ class HomePage extends StatelessWidget {
                 ),
                 TextButton(
                   onPressed: () {
-                    // 더보기 버튼 동작 추가
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              SalaryDetailsPage()), // Navigate to the new screen
+                    );
                   },
                   child: const Text('더보기'),
                 ),
