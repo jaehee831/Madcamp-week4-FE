@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:intl/intl.dart';
+import 'package:madcamp_week4_front/admin/admin.dart';
 
 class scheduleChooseStore extends StatefulWidget {
   final int userId;
@@ -99,7 +100,7 @@ class _scheduleChooseStoreState extends State<scheduleChooseStore> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => AdminSchedule(storeId: store['store_id']),
+                          builder: (context) => AdminSchedule(storeId: store['store_id'], userId: widget.userId),
                         ),
                       );
                     },
@@ -134,8 +135,13 @@ class _scheduleChooseStoreState extends State<scheduleChooseStore> {
 
 class AdminSchedule extends StatefulWidget {
   final int storeId;
+  final int userId;
 
-  const AdminSchedule({super.key, required this.storeId});
+  const AdminSchedule({
+    super.key,
+    required this.storeId,
+    required this.userId
+  });
 
   @override
   _AdminScheduleState createState() => _AdminScheduleState();
@@ -155,7 +161,7 @@ class _AdminScheduleState extends State<AdminSchedule> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('시간표 수정')),
+      appBar: AppBar(title: const Text('스케줄 추가')),
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: fetchStoreMembers(widget.storeId),
         builder: (context, snapshot) {
@@ -261,7 +267,7 @@ class _AdminScheduleState extends State<AdminSchedule> {
                     ),
                     ElevatedButton(
                       onPressed: saveTask,
-                      child: const Text('Submit'),
+                      child: const Text('저장'),
                     ),
                   ],
                 ),
@@ -317,6 +323,10 @@ class _AdminScheduleState extends State<AdminSchedule> {
         // Task added successfully
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Task added successfully')));
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => Admin(userId: widget.userId)),
+        );
       } else {
         // Error adding task
         ScaffoldMessenger.of(context)

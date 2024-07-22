@@ -16,7 +16,7 @@ class Admin extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('마이페이지'),
+        title: const Text('관리자 페이지'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {

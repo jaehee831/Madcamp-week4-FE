@@ -125,7 +125,7 @@ class _ChannelAddState extends State<ChannelAdd> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => HomePage(userId: widget.userId),
+            builder: (context) => HomePage(userId: widget.userId, storeId: storeId,),
           ),
         );
       } else {

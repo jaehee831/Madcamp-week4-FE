@@ -1,20 +1,36 @@
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'dart:convert';
 import 'package:madcamp_week4_front/admin/admin_profile.dart';
 import 'package:madcamp_week4_front/salary_details_page.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   final int userId;
+  final int storeId;
 
   const HomePage({
     super.key,
     required this.userId,
+    required this.storeId
   });
+
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+class _HomePageState extends State<HomePage> {
+  late String storeName;
+
+  @override
+  void initState() {
+    super.initState();
+    _getStoreName(widget.storeId);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('롯데리아 어은점'),
+        title: Text(storeName),
         leading: IconButton(
           icon: const Icon(Icons.menu),
           onPressed: () {
@@ -27,7 +43,7 @@ class HomePage extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => AdminProfile(userId: userId)),
+                MaterialPageRoute(builder: (context) => AdminProfile(userId: widget.userId)),
               );
             },
           ),
@@ -140,5 +156,22 @@ class HomePage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<void> _getStoreName(int storeId) async {
+    final url = Uri.parse('http://143.248.191.173:3001/get_store_name_list');
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'store_id': storeId}),
+    );
+    if (response.statusCode == 200) {
+      final responseBody = jsonDecode(response.body);
+      setState(() {
+        storeName = responseBody['store_name'];
+      });
+    } else {
+      throw Exception('Failed to load store name. Status code: ${response.statusCode}');
+    }
   }
 }

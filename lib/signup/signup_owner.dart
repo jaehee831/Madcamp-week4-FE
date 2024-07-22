@@ -86,6 +86,7 @@ class SignupStoreRegister extends StatefulWidget {
 class _SignupStoreRegisterState extends State<SignupStoreRegister> {
   late String randomKey;
   late int storeId;
+  Set<String> existingKeys = {};
 
   @override
   void initState() {
@@ -94,10 +95,42 @@ class _SignupStoreRegisterState extends State<SignupStoreRegister> {
   }
 
   Future<void> _processStoreRegistration() async {
+    await _fetchExistingKeys();
+    randomKey = _generateUniqueKey();
     await _saveStore();
     await _getStoreIdFromPassword(randomKey);
     await _saveOwnerStore(storeId);
     setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('가게 등록 완료'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('가게 "${widget.storeName}"가 성공적으로 등록되었습니다!'),
+            const SizedBox(height: 20), // 간격 추가
+            const Text('암호키발급'),
+            Text(randomKey, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 20), // 간격 추가
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomePage(userId: widget.userId, storeId: storeId)),
+                );
+              },
+              child: const Text('홈으로 가기'),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Future<void> _saveStore() async {
@@ -167,34 +200,26 @@ class _SignupStoreRegisterState extends State<SignupStoreRegister> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('가게 등록 완료'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('가게 "${widget.storeName}"가 성공적으로 등록되었습니다!'),
-            const SizedBox(height: 20), // 간격 추가
-            const Text('암호키발급'),
-            Text(randomKey, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 20), // 간격 추가
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => HomePage(userId: widget.userId)),
-                );
-              },
-              child: const Text('홈으로 가기'),
-            ),
-          ],
-        ),
-      ),
-    );
+  Future<void> _fetchExistingKeys() async {
+    final url = Uri.parse('http://143.248.191.173:3001/get_store_pw_list');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final List<dynamic> keys = jsonDecode(response.body);
+      existingKeys = keys.map((key) => key.toString()).toSet();
+    } else {
+      print('Failed to fetch existing keys');
+    }
   }
+
+  String _generateUniqueKey() {
+    final random = Random();
+    String key;
+    do {
+      key = random.nextInt(1000000).toString().padLeft(6, '0');
+    } while (existingKeys.contains(key));
+    return key;
+  }
+
 }
 

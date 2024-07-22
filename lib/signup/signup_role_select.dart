@@ -59,11 +59,11 @@ class SignUpRoleSelect extends StatelessWidget {
 
 Future<void> _onOwnerConfirmPressed(BuildContext context, int userId, String nickname) async {
   try {
-    bool ownerRegisterStore = await _checkUserRegisterStore(userId);
-    if (ownerRegisterStore) {
+    String ownerRegisterStore = await _checkUserRegisterStore(userId);
+    if (ownerRegisterStore != '') {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => HomePage(userId: userId)),
+        MaterialPageRoute(builder: (context) => HomePage(userId: userId, storeId: int.parse(ownerRegisterStore))),
       );
     } else {
       Navigator.push(
@@ -80,11 +80,11 @@ Future<void> _onOwnerConfirmPressed(BuildContext context, int userId, String nic
 
 Future<void> _onWorkerConfirmPressed(BuildContext context, int userId, String nickname) async {
   try {
-    bool workerRegisterStore = await _checkUserRegisterStore(userId);
-    if (workerRegisterStore) {
+    String workerRegisterStore = await _checkUserRegisterStore(userId);
+    if (workerRegisterStore != '') {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => HomePage(userId: userId)),
+        MaterialPageRoute(builder: (context) => HomePage(userId: userId, storeId: int.parse(workerRegisterStore))),
       );
     } else {
       Navigator.push(
@@ -128,7 +128,7 @@ Future<bool> _sendUserIdToServer(int userId, String nickname, int isAdmin) async
   }
 }
 
-Future<bool> _checkUserRegisterStore(int userId) async {
+Future<String> _checkUserRegisterStore(int userId) async {
   final url = Uri.parse('http://143.248.191.173:3001/get_store_list');
   final response = await http.post(
     url,
@@ -140,10 +140,10 @@ Future<bool> _checkUserRegisterStore(int userId) async {
   if (response.statusCode == 200) {
     final responseBody = jsonDecode(response.body);
     if (responseBody.containsKey('storeIds')) {
-      return true;
+      return responseBody['storeIds'].first.toString();
     } else {
       print('No store registered');
-      return false;
+      return '';
     }
   } else if (response.statusCode == 400) {
     final responseBody = jsonDecode(response.body);
@@ -152,5 +152,3 @@ Future<bool> _checkUserRegisterStore(int userId) async {
     throw Exception('Failed to load store ids. Status code: ${response.statusCode}');
   }
 }
-
-
