@@ -73,7 +73,7 @@ class _SignupWorkerState extends State<SignupWorker> {
   }
 
   Future<void> _checkUserRegisterStore(int userId) async {
-    final url = Uri.parse('http://143.248.191.160:3001/api/check_user_register_store');
+    final url = Uri.parse('http://143.248.191.173:3001/check_user_register_store');
     final response = await http.post(
       url,
       headers: <String, String>{
@@ -90,7 +90,7 @@ class _SignupWorkerState extends State<SignupWorker> {
         print('Store IDs: $storeIds');
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const HomePage()),
+          MaterialPageRoute(builder: (context) => HomePage(userId: userId)),
         );
       } else {
         print('No store registered');

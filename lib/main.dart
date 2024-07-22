@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
+import 'package:madcamp_week4_front/admin/admin_schedule.dart';
 import 'package:madcamp_week4_front/signup/signup_role_select.dart';
+import 'package:madcamp_week4_front/admin/admin_schedule.dart';
 import 'conditional_import.dart';
 import 'package:mysql_client/mysql_client.dart';
 
@@ -90,12 +92,20 @@ class _MyHomePageState extends State<MyHomePage> {
                   });
                   Navigator.push(
                     context,
+                    
                     MaterialPageRoute(
                       builder: (context) => SignUpRoleSelect(
                         userId: _userId,
                         nickname: _nickname,
                       ),
                     ),
+                    
+                    /*
+                    // test
+                    MaterialPageRoute(
+                      builder: (context) => AdminSchedule()
+                    ),
+                    */
                   );
                 });
               },

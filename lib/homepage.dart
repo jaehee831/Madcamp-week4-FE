@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:madcamp_week4_front/admin/admin_profile.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+  final int userId;
+
+  const HomePage({
+    super.key,
+    required this.userId,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +26,7 @@ class HomePage extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const AdminProfile()),
+                MaterialPageRoute(builder: (context) => AdminProfile(userId: userId)),
               );
             },
           ),

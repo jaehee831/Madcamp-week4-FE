@@ -120,7 +120,7 @@ class _ChannelAddState extends State<ChannelAdd> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => HomePage(), // HomePage로 이동
+        builder: (context) => HomePage(userId: widget.userId), // HomePage로 이동
       ),
     );
   }
