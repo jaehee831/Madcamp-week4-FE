@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'package:madcamp_week4_front/admin/admin_profile.dart';
-import 'salary_details_page.dart'; // Import the new screen
+import 'user_wage.dart';
 import 'homepage_no_store_worker.dart'; // Ensure this import is correct based on your project structure
 import 'channel_board_page.dart';
 import 'attendance_bot.dart';
@@ -19,39 +21,57 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
+  Future<String> _fetchUserName(int userId) async {
+    final response = await http.post(
+      Uri.parse('http://10.0.2.2:3001/get_user_name'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, int>{
+        'user_id': userId,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      return data['user_name'];
+    } else {
+      throw Exception('Failed to load user name');
+    }
+  }
 
   void _showChannelChangePopup(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('채널 변경'),
-          content: Container(
+          title: const Text('채널 변경'),
+          content: SizedBox(
             width: double.minPositive,
             child: ListView(
               shrinkWrap: true,
               children: [
                 ListTile(
-                  title: Text('버거킹 공동점'),
+                  title: const Text('버거킹 공동점'),
                   onTap: () {
                     // 채널 변경 로직 추가
                   },
                 ),
                 ListTile(
-                  title: Text('엔제리너스 어은점'),
+                  title: const Text('엔제리너스 어은점'),
                   onTap: () {
                     // 채널 변경 로직 추가
                   },
                 ),
                 ListTile(
-                  title: Text('+ 채널 추가하기'),
+                  title: const Text('+ 채널 추가하기'),
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) => HomepageNoStoreWorker(
-                              userId:
-                                  widget.userId)), // Make sure the import is correct
+                              userId: widget
+                                  .userId)), // Make sure the import is correct
                     );
                   },
                 ),
@@ -60,7 +80,7 @@ class _HomePageState extends State<HomePage> {
           ),
           actions: [
             TextButton(
-              child: Text('닫기'),
+              child: const Text('닫기'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -131,7 +151,7 @@ class _HomePageState extends State<HomePage> {
               ),
               child: GestureDetector(
                 onTap: () => _showChannelChangePopup(context),
-                child: Row(
+                child: const Row(
                   children: [
                     Icon(Icons.swap_horiz),
                     SizedBox(width: 8.0),
@@ -147,35 +167,35 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             ListTile(
-              leading: Icon(Icons.announcement),
-              title: Text('공지방'),
+              leading: const Icon(Icons.announcement),
+              title: const Text('공지방'),
               onTap: () => _navigateToChannelBoard(context, '공지방'),
             ),
             ListTile(
-              leading: Icon(Icons.group),
-              title: Text('인수인계방'),
+              leading: const Icon(Icons.group),
+              title: const Text('인수인계방'),
               onTap: () => _navigateToChannelBoard(context, '인수인계방'),
             ),
             ListTile(
-              leading: Icon(Icons.chat),
-              title: Text('잡담방'),
+              leading: const Icon(Icons.chat),
+              title: const Text('잡담방'),
               onTap: () => _navigateToChannelBoard(context, '잡담방'),
             ),
             ListTile(
-              leading: Icon(Icons.help),
-              title: Text('대타구하기방'),
+              leading: const Icon(Icons.help),
+              title: const Text('대타구하기방'),
               onTap: () => _navigateToChannelBoard(context, '대타구하기방'),
             ),
             ListTile(
-              leading: Icon(Icons.add),
-              title: Text('방 추가하기'),
+              leading: const Icon(Icons.add),
+              title: const Text('방 추가하기'),
               onTap: () {
                 // 방 추가하기 클릭 시 동작 추가
               },
             ),
             ListTile(
-              leading: Icon(Icons.logout),
-              title: Text('로그아웃'),
+              leading: const Icon(Icons.logout),
+              title: const Text('로그아웃'),
               onTap: () {
                 // 로그아웃 클릭 시 동작 추가
               },
@@ -246,13 +266,24 @@ class _HomePageState extends State<HomePage> {
                   style: TextStyle(fontSize: 16.0),
                 ),
                 TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              SalaryDetailsPage()), // Navigate to the new screen
-                    );
+                  onPressed: () async {
+                    try {
+                      String userName = await _fetchUserName(widget.userId);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => UserWagePage(
+                            userId: widget.userId,
+                            userName: userName,
+                          ),
+                        ),
+                      );
+                    } catch (error) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text('Failed to load user name')),
+                      );
+                    }
                   },
                   child: const Text('더보기'),
                 ),
