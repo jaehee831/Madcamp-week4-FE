@@ -2,15 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:madcamp_week4_front/admin/admin_profile.dart';
 import 'salary_details_page.dart'; // Import the new screen
 import 'homepage_no_store_worker.dart'; // Ensure this import is correct based on your project structure
-import 'channel_board_page.dart'; // Import the new channel board page
+import 'channel_board_page.dart';
+import 'attendance_bot.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   final int userId;
 
   const HomePage({
     super.key,
     required this.userId,
   });
+
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int _selectedIndex = 0;
 
   void _showChannelChangePopup(BuildContext context) {
     showDialog(
@@ -40,7 +48,10 @@ class HomePage extends StatelessWidget {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => HomepageNoStoreWorker(userId: userId)), // Make sure the import is correct
+                      MaterialPageRoute(
+                          builder: (context) => HomepageNoStoreWorker(
+                              userId:
+                                  widget.userId)), // Make sure the import is correct
                     );
                   },
                 ),
@@ -69,6 +80,21 @@ class HomePage extends StatelessWidget {
     );
   }
 
+  void _onItemTapped(int index) {
+    if (index == 2) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => AttendanceBotPage(userId: widget.userId),
+        ),
+      );
+    } else {
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,7 +114,8 @@ class HomePage extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => AdminProfile(userId: userId)),
+                MaterialPageRoute(
+                    builder: (context) => AdminProfile(userId: widget.userId)),
               );
             },
           ),
@@ -222,7 +249,9 @@ class HomePage extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => SalaryDetailsPage()), // Navigate to the new screen
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              SalaryDetailsPage()), // Navigate to the new screen
                     );
                   },
                   child: const Text('더보기'),
@@ -247,6 +276,8 @@ class HomePage extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
