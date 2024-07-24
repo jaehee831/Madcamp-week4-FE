@@ -58,8 +58,8 @@ class WritePostPage extends StatelessWidget {
             label: '내 정보',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: '설정',
+            icon: Icon(Icons.contacts),
+            label: '출첵',
           ),
         ],
       ),

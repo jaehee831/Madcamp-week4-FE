@@ -70,8 +70,8 @@ class _HomepageNoStoreWorkerState extends State<HomepageNoStoreWorker> {
             label: '멤버',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: '설정',
+            icon: Icon(Icons.contacts),
+            label: '출첵',
           ),
         ],
       ),
