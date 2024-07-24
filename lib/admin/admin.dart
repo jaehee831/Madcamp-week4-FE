@@ -76,7 +76,7 @@ class Admin extends StatelessWidget {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const AdminNotice()),
+                MaterialPageRoute(builder: (context) => noticeChooseStore(userId: userId)),
               );
             },
           ),

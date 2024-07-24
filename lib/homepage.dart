@@ -35,7 +35,7 @@ class _HomePageState extends State<HomePage> {
     _getStoreName(widget.storeId);
     _fetchNotice();
     _fetchRooms();
-     _fetchTasks(widget.storeId);
+    _fetchTasks(widget.storeId);
     _fetchUserWages();
   }
 
@@ -73,6 +73,7 @@ class _HomePageState extends State<HomePage> {
       throw Exception('Failed to load user name');
     }
   }
+
   List<Map<String, dynamic>> _rooms = [];
 
   Future<void> _fetchRooms() async {
@@ -243,11 +244,16 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _navigateToChannelBoard(BuildContext context, String channelName) {
+  void _navigateToChannelBoard(BuildContext context, int userId, String channelName, int boardId, String description) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ChannelBoardPage(channelName: channelName),
+        builder: (context) => ChannelBoardPage(
+          userId: userId,
+          channelName: channelName,
+          boardId: boardId,
+          description: description
+        ),
       ),
     );
   }
@@ -335,7 +341,7 @@ class _HomePageState extends State<HomePage> {
                   leading: const Icon(Icons.group),
                   title: Text(room['title'] ?? '방 이름 없음'),
                   onTap: () => _navigateToChannelBoard(
-                      context, room['title'] ?? '방 이름 없음'), // null 값을 처리
+                      context, widget.userId, room['title'] ?? '방 이름 없음', room['idboard'], room['description']), // null 값을 처리
                 )),
             ListTile(
               leading: const Icon(Icons.add),
@@ -345,10 +351,8 @@ class _HomePageState extends State<HomePage> {
                   context: context,
                   builder: (BuildContext context) {
                     return RoomDialog(
-                      onRoomAdded: (room) {
-                        setState(() {
-                          _rooms.add(room);
-                        });
+                      onRoomAdded: () {
+                        _fetchRooms();
                       },
                     );
                   },
@@ -439,18 +443,25 @@ class _HomePageState extends State<HomePage> {
                     style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 8.0),
-                  for (var task in tasks)
-                    if (DateTime.parse(task['start_time']).day == DateTime.now().day) 
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '${task['start_time'].substring(11, 16)}~${task['end_time'].substring(11, 16)}  ${task['task_name']}',
-                            style: TextStyle(fontSize: 14.0, color: Colors.black),
-                          ),
-                          SizedBox(height: 4.0),
-                        ],
-                      ),
+                  if (tasks.isEmpty ||
+                      tasks.where((task) => DateTime.parse(task['start_time']).day == DateTime.now().day).isEmpty)
+                    Text(
+                      '오늘 배정된 task가 없습니다.',
+                      style: TextStyle(fontSize: 14.0, color: Colors.grey),
+                    )
+                  else
+                    for (var task in tasks)
+                      if (DateTime.parse(task['start_time']).day == DateTime.now().day) 
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '${task['start_time'].substring(11, 16)}~${task['end_time'].substring(11, 16)}  ${task['task_name']}',
+                              style: TextStyle(fontSize: 14.0, color: Colors.black),
+                            ),
+                            SizedBox(height: 4.0),
+                          ],
+                        ),
                 ],
               ),
             ),
@@ -465,7 +476,16 @@ class _HomePageState extends State<HomePage> {
                 ),
                 TextButton(
                   onPressed: () async {
-                    _onWagePressed(widget.userId);
+                    String userName = await _fetchUserName(widget.userId);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => UserWagePage(
+                          userId: widget.userId,
+                          userName: userName,
+                        ),
+                      ),
+                    );
                   },
                   child: const Text('더보기'),
                 ),
@@ -574,47 +594,6 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  void _onWagePressed(int userId) async {
-    bool isAdmin = await _checkIsAdmin(userId);
-    if (isAdmin) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('알림'),
-            content: const Text('직원 전용 페이지입니다'),
-            actions: [
-              TextButton(
-                child: const Text('확인'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
-      return;
-    }
-    try {
-      String userName = await _fetchUserName(userId);
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => UserWagePage(
-            userId: widget.userId,
-            userName: userName,
-          ),
-        ),
-      );
-    } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Failed to load user name')),
-      );
-    }
-  }
-
   Future<void> _fetchUserWages() async {
     final url = Uri.parse('http://143.248.191.173:3001/get_user_wage');
     final response = await http.get(url);
@@ -710,7 +689,7 @@ class _HomePageState extends State<HomePage> {
 }
 
 class RoomDialog extends StatefulWidget {
-  final Function(Map<String, dynamic>) onRoomAdded;
+  final VoidCallback onRoomAdded;
   RoomDialog({required this.onRoomAdded});
 
   @override
@@ -737,14 +716,11 @@ class _RoomDialogState extends State<RoomDialog> {
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'name': name, 'description': description}),
+      body: jsonEncode({'title': name, 'description': description}),
     );
 
     if (response.statusCode == 201) {
-      widget.onRoomAdded({
-        'title': name,
-        'description': description,
-      });
+      widget.onRoomAdded();
       Navigator.of(context).pop();
     } else {
       print('Failed to add room. Response status: ${response.statusCode}, body: ${response.body}'); 

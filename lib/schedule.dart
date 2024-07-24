@@ -58,7 +58,7 @@ class _ScheduleState extends State<Schedule> {
               child: tasks.isEmpty
                   ? const Center(
                       child: Text(
-                        '가게에 배정된 task가 없습니다',
+                        '오늘 배정된 task가 없습니다',
                         style: TextStyle(fontSize: 16.0),
                       ),
                     )
@@ -215,8 +215,11 @@ class _ScheduleState extends State<Schedule> {
     if (response.statusCode == 200) {
       final responseBody = jsonDecode(response.body);
       if (responseBody is List) {
+        DateTime today = DateTime.now();
         setState(() {
-          tasks = List<Map<String, dynamic>>.from(responseBody);
+          tasks = List<Map<String, dynamic>>.from(responseBody)
+            .where((task) => DateTime.parse(task['start_time']).day == today.day)
+            .toList();
         });
       } else if (responseBody is Map && responseBody.containsKey('message')) {
         print('no registered tasks in the store');
