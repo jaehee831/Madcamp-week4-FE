@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:madcamp_week4_front/member.dart';
-import 'package:madcamp_week4_front/attendance_bot.dart';
 import 'package:madcamp_week4_front/signup/mobile_logout.dart';
 
 class WorkerProfile extends StatefulWidget {
@@ -16,7 +14,6 @@ class WorkerProfile extends StatefulWidget {
 }
 
 class _WorkerProfileState extends State<WorkerProfile> {
-  int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -87,37 +84,8 @@ class _WorkerProfileState extends State<WorkerProfile> {
             ),
           ],
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: '홈',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: '설정',
-          ),
-        ],
-      ),
+      )
     );
-  }
-
-  void _onItemTapped(int index) {
-    if (index == 1) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => AttendanceBotPage(userId: widget.userId),
-        ),
-      );
-    } else {
-      setState(() {
-        _selectedIndex = index;
-      });
-    }
   }
 
 }

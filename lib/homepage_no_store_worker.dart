@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:madcamp_week4_front/homepage.dart';
 import 'package:madcamp_week4_front/worker_profile.dart';
-import 'package:madcamp_week4_front/member.dart';
-import 'package:madcamp_week4_front/attendance_bot.dart';
 
 class HomepageNoStoreWorker extends StatefulWidget {
   final int userId;

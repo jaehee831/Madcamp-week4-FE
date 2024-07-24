@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:madcamp_week4_front/signup/mobile_logout.dart';
 
 class ChannelDelete extends StatelessWidget {
   const ChannelDelete({super.key});
@@ -18,7 +19,20 @@ class ChannelDelete extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () {
-              // 로그아웃 동작 추가
+              logoutFromKakao(
+                onLogoutSuccess: () {
+                  Navigator.popUntil(context, (route) => route.isFirst);
+                  Navigator.pushReplacementNamed(context, '/'); // 로그아웃 성공 시 메인화면으로 이동
+                },
+                onLogoutFailed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('로그아웃 실패'),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                },
+              );
             },
           ),
         ],
@@ -41,22 +55,6 @@ class ChannelDelete extends StatelessWidget {
             ChannelCard(channelName: '미스터피자 어은점'),
           ],
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: '홈',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: '내 정보',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: '설정',
-          ),
-        ],
       ),
     );
   }

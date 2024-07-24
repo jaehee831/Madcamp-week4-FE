@@ -63,83 +63,116 @@ class _ScheduleState extends State<Schedule> {
                       ),
                     )
                   : ListView.builder(
-                      itemCount: tasks.length,
-                      itemBuilder: (context, index) {
-                        final task = tasks[index];
-                        final startTime = DateTime.parse(task['start_time']);
-                        final endTime = DateTime.parse(task['end_time']);
-                        return FutureBuilder<List<int>>(
-                          future: _fetchUsersFromTask(task['idtasks'] ?? 0),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState == ConnectionState.waiting) {
-                              return const Center(child: CircularProgressIndicator());
-                            } else if (snapshot.hasError) {
-                              return const Center(child: Text('Failed to load users'));
-                            } else {
-                              final users = snapshot.data ?? [];
-                              return FutureBuilder<List<String>>(
-                                future: Future.wait(users.map((userId) => _fetchUserName(userId))),
-                                builder: (context, userSnapshot) {
-                                  if (userSnapshot.connectionState == ConnectionState.waiting) {
-                                    return const Center(child: CircularProgressIndicator());
-                                  } else if (userSnapshot.hasError) {
-                                    return const Center(child: Text('Failed to load user names'));
-                                  } else {
-                                    final userNames = userSnapshot.data ?? [];
-                                    return GestureDetector(
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => ScheduleDetail(
-                                              taskName: task['task_name'] ?? 'Unknown task',
-                                              startTime: startTime,
-                                              endTime: endTime,
-                                              users: userNames,
-                                              description: task['description'] ?? '',
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                      child: Container(
-                                        margin: const EdgeInsets.only(bottom: 16.0),
-                                        padding: const EdgeInsets.all(16.0),
-                                        decoration: BoxDecoration(
-                                          color: Colors.grey[200],
-                                          borderRadius: BorderRadius.circular(8.0),
-                                        ),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              task['task_name'] ?? 'Unknown task',
-                                              style: const TextStyle(
-                                                fontSize: 16.0,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 8.0),
-                                            Text(
-                                              '${timeFormat.format(startTime)} - ${timeFormat.format(endTime)}',
-                                              style: const TextStyle(fontSize: 14.0),
-                                            ),
-                                            const SizedBox(height: 8.0),
-                                            Text(
-                                              '담당자: ${userNames.join(', ')}',
-                                              style: const TextStyle(fontSize: 14.0, color: Colors.grey),
-                                            ),
-                                          ],
-                                        ),
+                    itemCount: tasks.length,
+                    itemBuilder: (context, index) {
+                      final task = tasks[index];
+                      final startTime = DateTime.parse(task['start_time']);
+                      final endTime = DateTime.parse(task['end_time']);
+                      return FutureBuilder<Map<String, dynamic>>(
+                        future: _fetchTaskDetails(task['idtasks'] ?? 0),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return const Center(child: CircularProgressIndicator());
+                          } else if (snapshot.hasError) {
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ScheduleDetail(
+                                      taskName: task['task_name'] ?? 'Unknown task',
+                                      startTime: startTime,
+                                      endTime: endTime,
+                                      users: [],
+                                      description: task['description'] ?? '',
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                margin: const EdgeInsets.only(bottom: 16.0),
+                                padding: const EdgeInsets.all(16.0),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[200],
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      task['task_name'] ?? 'Unknown task',
+                                      style: const TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.bold,
                                       ),
-                                    );
-                                  }
-                                },
-                              );
-                            }
-                          },
-                        );
-                      },
-                    ),
+                                    ),
+                                    const SizedBox(height: 8.0),
+                                    Text(
+                                      '${timeFormat.format(startTime)} - ${timeFormat.format(endTime)}',
+                                      style: const TextStyle(fontSize: 14.0),
+                                    ),
+                                    const SizedBox(height: 8.0),
+                                    const Text(
+                                      '담당자: 없음',
+                                      style: TextStyle(fontSize: 14.0, color: Colors.grey),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          } else {
+                            final userNames = snapshot.data?['userNames'] ?? [];
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ScheduleDetail(
+                                      taskName: task['task_name'] ?? 'Unknown task',
+                                      startTime: startTime,
+                                      endTime: endTime,
+                                      users: userNames,
+                                      description: task['description'] ?? '',
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                margin: const EdgeInsets.only(bottom: 16.0),
+                                padding: const EdgeInsets.all(16.0),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[200],
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      task['task_name'] ?? 'Unknown task',
+                                      style: const TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8.0),
+                                    Text(
+                                      '${timeFormat.format(startTime)} - ${timeFormat.format(endTime)}',
+                                      style: const TextStyle(fontSize: 14.0),
+                                    ),
+                                    const SizedBox(height: 8.0),
+                                    Text(
+                                      '담당자: ${userNames.isEmpty ? '없음' : userNames.join(', ')}',
+                                      style: const TextStyle(fontSize: 14.0, color: Colors.grey),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                      );
+                    },
+                  ),
             ),
           ],
         ),
@@ -160,6 +193,14 @@ class _ScheduleState extends State<Schedule> {
         MaterialPageRoute(builder: (context) => WorkerProfile(userId: userId)),
       );
     }
+  }
+
+  Future<Map<String, dynamic>> _fetchTaskDetails(int taskId) async {
+    final users = await _fetchUsersFromTask(taskId);
+    final userNames = await Future.wait(users.map((userId) => _fetchUserName(userId)).toList());
+    return {
+      'userNames': userNames,
+    };
   }
 
   Future<void> _fetchTasks(int storeId) async {

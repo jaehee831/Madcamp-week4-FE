@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'package:madcamp_week4_front/admin/admin.dart';
+import 'package:madcamp_week4_front/signup/mobile_logout.dart';
 
 class scheduleChooseStore extends StatefulWidget {
   final int userId;
@@ -75,7 +76,20 @@ class _scheduleChooseStoreState extends State<scheduleChooseStore> {
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () {
-              // 로그아웃 동작 추가
+              logoutFromKakao(
+                onLogoutSuccess: () {
+                  Navigator.popUntil(context, (route) => route.isFirst);
+                  Navigator.pushReplacementNamed(context, '/'); // 로그아웃 성공 시 메인화면으로 이동
+                },
+                onLogoutFailed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('로그아웃 실패'),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                },
+              );
             },
           ),
         ],
@@ -111,22 +125,6 @@ class _scheduleChooseStoreState extends State<scheduleChooseStore> {
             );
           }
         },
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: '홈',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: '내 정보',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: '설정',
-          ),
-        ],
       ),
     );
   }
