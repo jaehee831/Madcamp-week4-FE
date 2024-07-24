@@ -75,32 +75,25 @@ class _AdminProfileState extends State<AdminProfile> {
               backgroundImage: AssetImage('assets/images/광대.png'),
             ),
             const SizedBox(height: 24.0),
-            Container(
-              padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                color: primaryColor,
-                borderRadius: BorderRadius.circular(30.0),
-              ),
-              child: FutureBuilder<String>(
-                future: userNameFuture,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
-                    return Center(child: Text('오류 발생: ${snapshot.error}'));
-                  } else {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('이름', style: TextStyle(fontSize: 16.0)),
-                        const SizedBox(height: 16.0),
-                        Text(snapshot.data!,
-                            style: const TextStyle(fontSize: 16.0)),
-                      ],
-                    );
-                  }
-                },
-              ),
+            FutureBuilder<String>(
+              future: userNameFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('오류 발생: ${snapshot.error}'));
+                } else {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Text('이름', style: TextStyle(fontSize: 20.0)),
+                      const SizedBox(height: 16.0),
+                      Text(snapshot.data!,
+                          style: const TextStyle(fontSize: 16.0)),
+                    ],
+                  );
+                }
+              },
             ),
             const SizedBox(height: 24.0),
             FutureBuilder<List<String>>(
@@ -115,9 +108,9 @@ class _AdminProfileState extends State<AdminProfile> {
                 } else {
                   final storeNames = snapshot.data!;
                   return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      const Text('등록가게', style: TextStyle(fontSize: 16.0)),
+                      const Text('등록가게', style: TextStyle(fontSize: 20.0)),
                       const SizedBox(height: 8.0),
                       ...storeNames.map((storeName) => Text(storeName,
                           style: const TextStyle(fontSize: 16.0))),

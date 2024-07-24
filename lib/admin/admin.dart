@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:madcamp_week4_front/main.dart';
 import 'admin_attendance.dart';
 import 'admin_money.dart';
 import 'admin_notice.dart';
@@ -8,16 +9,14 @@ import 'package:madcamp_week4_front/signup/mobile_logout.dart';
 class Admin extends StatelessWidget {
   final int userId;
 
-  const Admin({
-    super.key,
-    required this.userId
-  });
+  const Admin({super.key, required this.userId});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('관리자 페이지'),
+        backgroundColor: primaryColor,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -31,11 +30,12 @@ class Admin extends StatelessWidget {
               logoutFromKakao(
                 onLogoutSuccess: () {
                   Navigator.popUntil(context, (route) => route.isFirst);
-                  Navigator.pushReplacementNamed(context, '/'); // 로그아웃 성공 시 메인화면으로 이동
+                  Navigator.pushReplacementNamed(
+                      context, '/'); // 로그아웃 성공 시 메인화면으로 이동
                 },
                 onLogoutFailed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
+                    const SnackBar(
                       content: Text('로그아웃 실패'),
                       duration: Duration(seconds: 2),
                     ),
@@ -54,7 +54,8 @@ class Admin extends StatelessWidget {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => scheduleChooseStore(userId: userId)),
+                MaterialPageRoute(
+                    builder: (context) => scheduleChooseStore(userId: userId)),
               );
             },
           ),
@@ -65,7 +66,9 @@ class Admin extends StatelessWidget {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => attendanceChooseStore(userId: userId)),
+                MaterialPageRoute(
+                    builder: (context) =>
+                        attendanceChooseStore(userId: userId)),
               );
             },
           ),
@@ -87,7 +90,8 @@ class Admin extends StatelessWidget {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => moneyChooseStore(userId: userId)),
+                MaterialPageRoute(
+                    builder: (context) => moneyChooseStore(userId: userId)),
               );
             },
           ),
