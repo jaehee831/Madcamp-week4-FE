@@ -342,7 +342,7 @@ class _HomePageState extends State<HomePage> {
                 borderRadius: BorderRadius.circular(8.0),
               ),
               child: const Text(
-                '여기는 급여~~',
+                '이번 달 월급\n 49,485,332원\n 쌓였어요',
                 style: TextStyle(fontSize: 14.0, color: Colors.grey),
               ),
             ),
