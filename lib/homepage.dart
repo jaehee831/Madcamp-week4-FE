@@ -16,17 +16,14 @@ class HomePage extends StatefulWidget {
   final int userId;
   final int storeId;
 
-  const HomePage({
-    super.key,
-    required this.userId,
-    required this.storeId
-  });
+  const HomePage({super.key, required this.userId, required this.storeId});
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+  String _notice = '공지 사항을 불러오는 중...';
   late String storeName = '';
   late List<Map<String, dynamic>> tasks = [];
   late Map<int, int> userWages = {};
@@ -36,8 +33,26 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _getStoreName(widget.storeId);
-    _fetchTasks(widget.storeId);
+    _fetchNotice();
+    _fetchRooms();
+     _fetchTasks(widget.storeId);
     _fetchUserWages();
+  }
+
+  Future<void> _fetchNotice() async {
+    final url = Uri.parse('http://143.248.191.173:3001/get_notice');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      setState(() {
+        _notice = data['content'];
+      });
+    } else {
+      setState(() {
+        _notice = '공지 사항을 불러오지 못했습니다.';
+      });
+    }
   }
 
   Future<String> _fetchUserName(int userId) async {
@@ -58,8 +73,23 @@ class _HomePageState extends State<HomePage> {
       throw Exception('Failed to load user name');
     }
   }
+  List<Map<String, dynamic>> _rooms = [];
 
-    Future<List<int>> _getStoreList(int userId) async {
+  Future<void> _fetchRooms() async {
+    final url = Uri.parse('http://143.248.191.173:3001/get_boards');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      setState(() {
+        _rooms = List<Map<String, dynamic>>.from(data);
+      });
+    } else {
+      _rooms = [];
+    }
+  }
+
+  Future<List<int>> _getStoreList(int userId) async {
     final url = Uri.parse('http://143.248.191.173:3001/get_store_list');
     final response = await http.post(
       url,
@@ -301,31 +331,28 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-            ListTile(
-              leading: const Icon(Icons.announcement),
-              title: const Text('공지방'),
-              onTap: () => _navigateToChannelBoard(context, '공지방'),
-            ),
-            ListTile(
-              leading: const Icon(Icons.group),
-              title: const Text('인수인계방'),
-              onTap: () => _navigateToChannelBoard(context, '인수인계방'),
-            ),
-            ListTile(
-              leading: const Icon(Icons.chat),
-              title: const Text('잡담방'),
-              onTap: () => _navigateToChannelBoard(context, '잡담방'),
-            ),
-            ListTile(
-              leading: const Icon(Icons.help),
-              title: const Text('대타구하기방'),
-              onTap: () => _navigateToChannelBoard(context, '대타구하기방'),
-            ),
+            ..._rooms.map((room) => ListTile(
+                  leading: const Icon(Icons.group),
+                  title: Text(room['title'] ?? '방 이름 없음'),
+                  onTap: () => _navigateToChannelBoard(
+                      context, room['title'] ?? '방 이름 없음'), // null 값을 처리
+                )),
             ListTile(
               leading: const Icon(Icons.add),
               title: const Text('방 추가하기'),
               onTap: () {
-                // 방 추가하기 클릭 시 동작 추가
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return RoomDialog(
+                      onRoomAdded: (room) {
+                        setState(() {
+                          _rooms.add(room);
+                        });
+                      },
+                    );
+                  },
+                );
               },
             ),
             ListTile(
@@ -369,9 +396,9 @@ class _HomePageState extends State<HomePage> {
                 color: Colors.grey[200],
                 borderRadius: BorderRadius.circular(8.0),
               ),
-              child: const Text(
-                '7/20 사정일 사정으로 휴무합니다',
-                style: TextStyle(fontSize: 14.0, color: Colors.grey),
+              child: Text(
+                _notice,
+                style: const TextStyle(fontSize: 14.0, color: Colors.grey),
               ),
             ),
             const SizedBox(height: 16.0),
@@ -386,9 +413,11 @@ class _HomePageState extends State<HomePage> {
                 TextButton(
                   onPressed: () {
                     Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => Schedule(userId: widget.userId, storeId: widget.storeId))
-                    );
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Schedule(
+                                userId: widget.userId,
+                                storeId: widget.storeId)));
                   },
                   child: const Text('더보기'),
                 ),
@@ -532,12 +561,12 @@ class _HomePageState extends State<HomePage> {
   
   void _onPersonPressed(int userId) async {
     bool isAdmin = await _checkIsAdmin(userId);
-    if(isAdmin){
+    if (isAdmin) {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => AdminProfile(userId: userId)),
       );
-    }else{
+    } else {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => WorkerProfile(userId: userId)),
@@ -668,13 +697,96 @@ class _HomePageState extends State<HomePage> {
     );
     print("check_isadmin: ${response.body}");
     if (response.statusCode == 200) {
-      if(jsonDecode(response.body) == 1){
+      if (jsonDecode(response.body) == 1) {
         return true;
-      }else{
+      } else {
         return false;
       }
     } else {
-      throw Exception('Failed to check if user is admin. Status code: ${response.statusCode}');
+      throw Exception(
+          'Failed to check if user is admin. Status code: ${response.statusCode}');
     }
+  }
+}
+
+class RoomDialog extends StatefulWidget {
+  final Function(Map<String, dynamic>) onRoomAdded;
+  RoomDialog({required this.onRoomAdded});
+
+  @override
+  _RoomDialogState createState() => _RoomDialogState();
+}
+
+class _RoomDialogState extends State<RoomDialog> {
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+
+  Future<void> _addRoom() async {
+    final name = _nameController.text;
+    final description = _descriptionController.text;
+
+    if (name.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('방 이름을 입력하세요')),
+      );
+      return;
+    }
+
+    final url = Uri.parse('http://143.248.191.173:3001/add_board');
+    print('Adding room with name: $name and description: $description'); 
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'name': name, 'description': description}),
+    );
+
+    if (response.statusCode == 201) {
+      widget.onRoomAdded({
+        'title': name,
+        'description': description,
+      });
+      Navigator.of(context).pop();
+    } else {
+      print('Failed to add room. Response status: ${response.statusCode}, body: ${response.body}'); 
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('방 추가에 실패했습니다')),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('방 추가하기'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          TextField(
+            controller: _nameController,
+            decoration: const InputDecoration(
+              labelText: '방 이름',
+            ),
+          ),
+          TextField(
+            controller: _descriptionController,
+            decoration: const InputDecoration(
+              labelText: '설명',
+            ),
+          ),
+        ],
+      ),
+      actions: <Widget>[
+        TextButton(
+          onPressed: _addRoom,
+          child: const Text('작성 완료'),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: const Text('닫기'),
+        ),
+      ],
+    );
   }
 }
