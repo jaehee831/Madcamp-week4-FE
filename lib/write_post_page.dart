@@ -1,20 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:madcamp_week4_front/channel_board_page.dart';
 
-class WritePostPage extends StatelessWidget {
+class WritePostPage extends StatefulWidget {
+  final int userId;
   final String channelName;
+  final int boardId;
 
-  const WritePostPage({super.key, required this.channelName});
+  const WritePostPage({
+    super.key,
+    required this.userId,
+    required this.channelName,
+    required this.boardId
+  });
+
+  @override
+  _WritePostPageState createState() => _WritePostPageState();
+}
+
+class _WritePostPageState extends State<WritePostPage> {
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _contentController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(channelName),
+        title: Text(widget.channelName),
         actions: [
           TextButton(
-            onPressed: () {
-              // 글 작성 완료 버튼 동작 추가
-            },
+            onPressed: _savePost,
             child: Text(
               '완료',
               style: TextStyle(color: Colors.grey),
@@ -28,6 +44,7 @@ class WritePostPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextField(
+              controller: _titleController,
               decoration: InputDecoration(
                 labelText: '제목',
                 labelStyle: TextStyle(color: Colors.grey),
@@ -36,33 +53,62 @@ class WritePostPage extends StatelessWidget {
             ),
             const SizedBox(height: 16.0),
             Expanded(
-              child: TextField(
-                decoration: InputDecoration(
-                  border: InputBorder.none,
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(8.0),
                 ),
-                maxLines: null,
-                expands: true,
+                padding: const EdgeInsets.all(8.0),
+                child: TextField(
+                  controller: _contentController,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: '내용을 입력하세요',
+                  ),
+                  maxLines: null,
+                  expands: true,
+                ),
               ),
             ),
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: '홈',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: '내 정보',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: '설정',
-          ),
-        ],
-      ),
     );
   }
+
+  Future<void> _savePost() async {
+    final url = Uri.parse('http://143.248.191.173:3001/create_posts');
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'title': _titleController.text,
+        'content': _contentController.text,
+        'board_id': widget.boardId,
+        'user_id': widget.userId
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Post saved successfully')),
+      );
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ChannelBoardPage(
+            userId: widget.userId, 
+            channelName: widget.channelName, 
+            boardId: widget.boardId, 
+            description: 'df'
+          ),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to save post'))
+      );
+    }
+  }
+
 }
