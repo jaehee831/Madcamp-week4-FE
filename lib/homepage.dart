@@ -27,13 +27,31 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late String storeName = '';
+  String _notice = '공지 사항을 불러오는 중...';
+  String storeName = '';
   int _selectedIndex = 0;
 
   @override
   void initState() {
     super.initState();
     _getStoreName(widget.storeId);
+    _fetchNotice();
+  }
+
+  Future<void> _fetchNotice() async {
+    final url = Uri.parse('http://143.248.191.173:3001/get_notice');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      setState(() {
+        _notice = data['content'];
+      });
+    } else {
+      setState(() {
+        _notice = '공지 사항을 불러오지 못했습니다.';
+      });
+    }
   }
 
   Future<String> _fetchUserName(int userId) async {
@@ -201,7 +219,12 @@ class _HomePageState extends State<HomePage> {
               leading: const Icon(Icons.add),
               title: const Text('방 추가하기'),
               onTap: () {
-                // 방 추가하기 클릭 시 동작 추가
+                showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return RoomDialog();
+                },
+              );
               },
             ),
             ListTile(
@@ -232,9 +255,9 @@ class _HomePageState extends State<HomePage> {
                 color: Colors.grey[200],
                 borderRadius: BorderRadius.circular(8.0),
               ),
-              child: const Text(
-                '7/20 사정일 사정으로 휴무합니다',
-                style: TextStyle(fontSize: 14.0, color: Colors.grey),
+              child: Text(
+                _notice,
+                style: const TextStyle(fontSize: 14.0, color: Colors.grey),
               ),
             ),
             const SizedBox(height: 16.0),
@@ -389,5 +412,58 @@ class _HomePageState extends State<HomePage> {
     } else {
       throw Exception('Failed to check if user is admin. Status code: ${response.statusCode}');
     }
+  }
+}
+
+class RoomDialog extends StatefulWidget {
+  @override
+  _RoomDialogState createState() => _RoomDialogState();
+}
+
+class _RoomDialogState extends State<RoomDialog> {
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('방 추가하기'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          TextField(
+            controller: _nameController,
+            decoration: InputDecoration(
+              labelText: '방 이름',
+            ),
+          ),
+          TextField(
+            controller: _descriptionController,
+            decoration: InputDecoration(
+              labelText: '설명',
+            ),
+          ),
+        ],
+      ),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () {
+            // 작성 완료 버튼을 누를 때의 동작 추가
+            String name = _nameController.text;
+            String description = _descriptionController.text;
+            // 예를 들어, 입력된 값들을 출력해 봅니다.
+            print('방 이름: $name, 설명: $description');
+            Navigator.of(context).pop();
+          },
+          child: Text('작성 완료'),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: Text('닫기'),
+        ),
+      ],
+    );
   }
 }

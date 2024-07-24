@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class AdminNotice extends StatelessWidget {
   const AdminNotice({super.key});
@@ -7,6 +9,37 @@ class AdminNotice extends StatelessWidget {
   Widget build(BuildContext context) {
     final TextEditingController _controller = TextEditingController();
 
+    Future<void> _updateNotice() async {
+      final noticeText = _controller.text;
+      if (noticeText.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('공지 내용을 입력하세요')),
+        );
+        return;
+      }
+
+      final url = Uri.parse('http://143.248.191.173:3001/edit_notice');
+      final response = await http.put(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'content': noticeText,
+          'time': DateTime.now().toIso8601String(),
+          'idstores': 1,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('공지 등록 완료')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('공지 등록 실패')),
+        );
+      }
+    }
+    
     return Scaffold(
       appBar: AppBar(
         title: const Text('공지 작성'),
@@ -46,11 +79,7 @@ class AdminNotice extends StatelessWidget {
             const SizedBox(height: 16.0),
             Center(
               child: ElevatedButton(
-                onPressed: () {
-                  // 공지 등록 동작 추가
-                  final noticeText = _controller.text;
-                  // 공지 등록 로직 추가
-                },
+                onPressed: _updateNotice,
                 child: const Text('공지 등록'),
               ),
             ),
