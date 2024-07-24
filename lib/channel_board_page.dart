@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'post_detail_page.dart';
+import 'package:madcamp_week4_front/main.dart';
+import 'post_detail_page.dart'; // Import the new post detail page
 import 'write_post_page.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -38,6 +40,7 @@ class _ChannelBoardPageState extends State<ChannelBoardPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.channelName),
+        backgroundColor: primaryColor,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -139,6 +142,7 @@ class _ChannelBoardPageState extends State<ChannelBoardPage> {
         ),
       ),
       bottomNavigationBar: BottomAppBar(
+        color: Colors.white,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: ElevatedButton(
@@ -154,7 +158,11 @@ class _ChannelBoardPageState extends State<ChannelBoardPage> {
                 ),
               );
             },
-            child: Text('+ 글쓰기'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: primaryColor, // 버튼 색상을 #FFE174로 설정
+            ),
+            child: const Text('글쓰기',
+                style: TextStyle(fontSize: 16, color: Colors.black)),
           ),
         ),
       ),

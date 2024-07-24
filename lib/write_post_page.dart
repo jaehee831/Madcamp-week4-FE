@@ -39,7 +39,7 @@ class _WritePostPageState extends State<WritePostPage> {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -51,14 +51,14 @@ class _WritePostPageState extends State<WritePostPage> {
                 border: UnderlineInputBorder(),
               ),
             ),
-            const SizedBox(height: 16.0),
+            SizedBox(height: 16.0),
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.grey),
                   borderRadius: BorderRadius.circular(8.0),
                 ),
-                padding: const EdgeInsets.all(8.0),
+                padding: EdgeInsets.all(8.0),
                 child: TextField(
                   controller: _contentController,
                   decoration: InputDecoration(

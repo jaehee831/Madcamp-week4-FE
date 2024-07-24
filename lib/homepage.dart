@@ -2,6 +2,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:madcamp_week4_front/admin/admin_profile.dart';
+import 'package:madcamp_week4_front/main.dart';
 import 'user_wage.dart';
 import 'homepage_no_store_worker.dart'; // Ensure this import is correct based on your project structure
 import 'channel_board_page.dart';
@@ -35,6 +36,7 @@ class _HomePageState extends State<HomePage> {
     _getStoreName(widget.storeId);
     _fetchNotice();
     _fetchRooms();
+    _fetchTasks(widget.storeId);
     _fetchTasks(widget.storeId);
     _fetchUserWages();
   }
@@ -109,7 +111,8 @@ class _HomePageState extends State<HomePage> {
       final responseBody = jsonDecode(response.body);
       throw Exception('Missing Fields: ${responseBody['error']}');
     } else {
-      throw Exception('Failed to load store ids. Status code: ${response.statusCode}');
+      throw Exception(
+          'Failed to load store ids. Status code: ${response.statusCode}');
     }
   }
 
@@ -127,7 +130,8 @@ class _HomePageState extends State<HomePage> {
       });
       return responseBody['store_name'];
     } else {
-      throw Exception('Failed to load store name. Status code: ${response.statusCode}');
+      throw Exception(
+          'Failed to load store name. Status code: ${response.statusCode}');
     }
   }
 
@@ -153,8 +157,8 @@ class _HomePageState extends State<HomePage> {
           future: _getStoreData(widget.userId),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return AlertDialog(
-                title: const Text('채널 변경'),
+              return const AlertDialog(
+                title: Text('채널 변경'),
                 content: SizedBox(
                   width: double.minPositive,
                   child: Center(child: CircularProgressIndicator()),
@@ -163,7 +167,7 @@ class _HomePageState extends State<HomePage> {
             } else if (snapshot.hasError) {
               return AlertDialog(
                 title: const Text('채널 변경'),
-                content: SizedBox(
+                content: const SizedBox(
                   width: double.minPositive,
                   child: Center(child: Text('Failed to load stores')),
                 ),
@@ -219,7 +223,8 @@ class _HomePageState extends State<HomePage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => HomepageNoStoreWorker(userId: widget.userId),
+                                builder: (context) => HomepageNoStoreWorker(
+                                    userId: widget.userId),
                               ),
                             );
                           }
@@ -259,21 +264,20 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _onItemTapped(int index) {
-    if(index == 0) {
+    if (index == 0) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => HomePage(
-            userId: widget.userId,
-            storeId: widget.storeId
-          ),
+          builder: (context) =>
+              HomePage(userId: widget.userId, storeId: widget.storeId),
         ),
       );
-    } else if(index == 1) {
+    } else if (index == 1) {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => Member(userId: widget.userId, storeId: widget.storeId),
+          builder: (context) =>
+              Member(userId: widget.userId, storeId: widget.storeId),
         ),
       );
     } else if (index == 2) {
@@ -295,6 +299,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(storeName),
+        backgroundColor: primaryColor,
         leading: Builder(
           builder: (context) => IconButton(
             icon: const Icon(Icons.menu),
@@ -317,8 +322,8 @@ class _HomePageState extends State<HomePage> {
           padding: EdgeInsets.zero,
           children: <Widget>[
             DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
+              decoration: const BoxDecoration(
+                color: primaryColor,
               ),
               child: GestureDetector(
                 onTap: () => _showChannelChangePopup(context),
@@ -366,11 +371,12 @@ class _HomePageState extends State<HomePage> {
                 logoutFromKakao(
                   onLogoutSuccess: () {
                     Navigator.popUntil(context, (route) => route.isFirst);
-                    Navigator.pushReplacementNamed(context, '/'); // 로그아웃 성공 시 메인 화면으로 이동
+                    Navigator.pushReplacementNamed(
+                        context, '/'); // 로그아웃 성공 시 메인 화면으로 이동
                   },
                   onLogoutFailed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
+                      const SnackBar(
                         content: Text('로그아웃 실패'),
                         duration: Duration(seconds: 2),
                       ),
@@ -384,66 +390,67 @@ class _HomePageState extends State<HomePage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 공지 섹션
-            const Text(
-              '공지',
-              style: TextStyle(fontSize: 16.0),
-            ),
-            const SizedBox(height: 8.0),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(8.0),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 공지 섹션
+              const Text(
+                '공지',
+                style: TextStyle(fontSize: 24.0),
               ),
-              child: Text(
-                _notice,
-                style: const TextStyle(fontSize: 14.0, color: Colors.grey),
-              ),
-            ),
-            const SizedBox(height: 16.0),
-            // 업무 시간표 섹션
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  '업무 시간표',
-                  style: TextStyle(fontSize: 16.0),
+              const SizedBox(height: 16.0),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(24.0),
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(16.0),
                 ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => Schedule(
-                                userId: widget.userId,
-                                storeId: widget.storeId)));
-                  },
-                  child: const Text('더보기'),
+                child: Text(
+                  _notice,
+                  style: const TextStyle(fontSize: 14.0, color: Colors.grey),
                 ),
-              ],
-            ),
-            const SizedBox(height: 8.0),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(8.0),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              const SizedBox(height: 16.0),
+              // 업무 시간표 섹션
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
+                  const Text(
                     '업무 시간표',
-                    style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 24.0),
                   ),
-                  SizedBox(height: 8.0),
-                  if (tasks.isEmpty ||
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Schedule(
+                                  userId: widget.userId,
+                                  storeId: widget.storeId)));
+                    },
+                    child: const Text('더보기'),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16.0),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(16.0),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      '업무 시간표',
+                      style: TextStyle(fontSize: 16.0),
+                    ),
+                    const SizedBox(height: 16.0),
+                    if (tasks.isEmpty ||
                       tasks.where((task) => DateTime.parse(task['start_time']).day == DateTime.now().day).isEmpty)
                     Text(
                       '오늘 배정된 task가 없습니다.',
@@ -451,32 +458,34 @@ class _HomePageState extends State<HomePage> {
                     )
                   else
                     for (var task in tasks)
-                      if (DateTime.parse(task['start_time']).day == DateTime.now().day) 
+                      if (DateTime.parse(task['start_time']).day ==
+                          DateTime.now().day)
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               '${task['start_time'].substring(11, 16)}~${task['end_time'].substring(11, 16)}  ${task['task_name']}',
-                              style: TextStyle(fontSize: 14.0, color: Colors.black),
+                              style: const TextStyle(
+                                  fontSize: 14.0, color: Colors.black),
                             ),
-                            SizedBox(height: 4.0),
+                            const SizedBox(height: 4.0),
                           ],
                         ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16.0),
-            // 급여 계산 섹션
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  '급여 계산',
-                  style: TextStyle(fontSize: 16.0),
+                  ],
                 ),
-                TextButton(
-                  onPressed: () async {
-                    String userName = await _fetchUserName(widget.userId);
+              ),
+              const SizedBox(height: 16.0),
+              // 급여 계산 섹션
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    '급여 계산',
+                    style: TextStyle(fontSize: 24.0),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      String userName = await _fetchUserName(widget.userId);
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -486,81 +495,89 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                     );
-                  },
-                  child: const Text('더보기'),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8.0),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(8.0),
+                    },
+                    child: const Text('더보기'),
+                  ),
+                ],
               ),
-              child: FutureBuilder<bool>(
-                future: _checkIsAdmin(widget.userId),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
-                    return const Text(
-                      '오류 발생',
-                      style: TextStyle(fontSize: 14.0, color: Colors.grey),
-                    );
-                  } else {
-                    final isAdmin = snapshot.data ?? false;
-                    if (isAdmin) {
+              const SizedBox(height: 16.0),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                child: FutureBuilder<bool>(
+                  future: _checkIsAdmin(widget.userId),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
                       return const Text(
-                        '직원 전용 페이지입니다.',
+                        '오류 발생',
                         style: TextStyle(fontSize: 14.0, color: Colors.grey),
                       );
                     } else {
-                      return FutureBuilder<int>(
-                        future: _fetchMemberWorkTime(widget.userId),
-                        builder: (context, timeSnapshot) {
-                          if (timeSnapshot.connectionState == ConnectionState.waiting) {
-                            return const Center(child: CircularProgressIndicator());
-                          } else if (timeSnapshot.hasError) {
-                            return const Text(
-                              '오류 발생',
-                              style: TextStyle(fontSize: 14.0, color: Colors.grey),
-                            );
-                          } else {
-                            final totalMinutes = timeSnapshot.data ?? 0;
-                            final hourlyRate = userWages[widget.userId] ?? 0;
-                            final monthlySalary = (hourlyRate / 60) * totalMinutes;
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  '이번 달 월급',
-                                  style: TextStyle(fontSize: 14.0, color: Colors.grey),
-                                ),
-                                const SizedBox(height: 8.0),
-                                Text(
-                                  '${monthlySalary.toStringAsFixed(0)} 원 쌓였어요',
-                                  style: const TextStyle(fontSize: 14.0, color: Colors.black),
-                                ),
-                              ],
-                            );
-                          }
-                        },
-                      );
+                      final isAdmin = snapshot.data ?? false;
+                      if (isAdmin) {
+                        return const Text(
+                          '직원 전용 페이지입니다.',
+                          style: TextStyle(fontSize: 14.0, color: Colors.grey),
+                        );
+                      } else {
+                        return FutureBuilder<int>(
+                          future: _fetchMemberWorkTime(widget.userId),
+                          builder: (context, timeSnapshot) {
+                            if (timeSnapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            } else if (timeSnapshot.hasError) {
+                              return const Text(
+                                '오류 발생',
+                                style: TextStyle(
+                                    fontSize: 14.0, color: Colors.grey),
+                              );
+                            } else {
+                              final totalMinutes = timeSnapshot.data ?? 0;
+                              final hourlyRate = userWages[widget.userId] ?? 0;
+                              final monthlySalary =
+                                  (hourlyRate / 60) * totalMinutes;
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    '이번 달 월급',
+                                    style: TextStyle(
+                                        fontSize: 14.0, color: Colors.grey),
+                                  ),
+                                  const SizedBox(height: 8.0),
+                                  Text(
+                                    '${monthlySalary.toStringAsFixed(0)} 원 쌓였어요',
+                                    style: const TextStyle(
+                                        fontSize: 14.0, color: Colors.black),
+                                  ),
+                                ],
+                              );
+                            }
+                          },
+                        );
+                      }
                     }
-                  }
-                },
+                  },
+                ),
               ),
-            ),
 
-            const SizedBox(height: 16.0),
-          ],
+              const SizedBox(height: 16.0),
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
+        backgroundColor: const Color(0xFFFFF0BA),
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -571,14 +588,14 @@ class _HomePageState extends State<HomePage> {
             label: '멤버',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: '설정',
+            icon: Icon(Icons.contacts),
+            label: '출첵',
           ),
         ],
       ),
     );
   }
-  
+
   void _onPersonPressed(int userId) async {
     bool isAdmin = await _checkIsAdmin(userId);
     if (isAdmin) {
@@ -594,6 +611,46 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  void _onWagePressed(int userId) async {
+    bool isAdmin = await _checkIsAdmin(userId);
+    if (isAdmin) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('알림'),
+            content: const Text('직원 전용 페이지입니다'),
+            actions: [
+              TextButton(
+                child: const Text('확인'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+      return;
+    }
+    try {
+      String userName = await _fetchUserName(userId);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => UserWagePage(
+            userId: widget.userId,
+            userName: userName,
+          ),
+        ),
+      );
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to load user name')),
+      );
+    }
+  }
+
   Future<void> _fetchUserWages() async {
     final url = Uri.parse('http://143.248.191.173:3001/get_user_wage');
     final response = await http.get(url);
@@ -602,20 +659,21 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         userWages = {
           for (var wageInfo in responseBody)
-            wageInfo['iduser']: int.parse(wageInfo['hourly_rate'].toString().split('.')[0])
+            wageInfo['iduser']:
+                int.parse(wageInfo['hourly_rate'].toString().split('.')[0])
         };
       });
     } else {
-      throw Exception('Failed to load user wages. Status code: ${response.statusCode}');
+      throw Exception(
+          'Failed to load user wages. Status code: ${response.statusCode}');
     }
   }
 
   Future<int> _fetchMemberWorkTime(int userId) async {
-    final url = Uri.parse('http://143.248.191.173:3001/get_member_work_time?user_id=$userId');
-    final response = await http.get(
-      url,
-      headers: {'Content-Type': 'application/json'}
-    );
+    final url = Uri.parse(
+        'http://143.248.191.173:3001/get_member_work_time?user_id=$userId');
+    final response =
+        await http.get(url, headers: {'Content-Type': 'application/json'});
     print('get_member_work_time: ${response.body}');
     print('get_member_work_time: ${response.statusCode}');
     final responseBody = jsonDecode(response.body);
@@ -631,10 +689,13 @@ class _HomePageState extends State<HomePage> {
         totalMinutes -= breakEnd.difference(breakStart).inMinutes;
       }
       return totalMinutes;
-    } else if (responseBody.containsKey('message') && responseBody['message'] == 'No records found for the specified user_id') {
+    } else if (responseBody.containsKey('message') &&
+        responseBody['message'] ==
+            'No records found for the specified user_id') {
       return 0;
     } else {
-      throw Exception('Failed to load work time. Status code: ${response.statusCode}');
+      throw Exception(
+          'Failed to load work time. Status code: ${response.statusCode}');
     }
   }
 
@@ -652,20 +713,21 @@ class _HomePageState extends State<HomePage> {
       if (responseBody is List) {
         DateTime today = DateTime.now();
         setState(() {
-        tasks = List<Map<String, dynamic>>.from(responseBody)
-          .where((task) => DateTime.parse(task['start_time']).day == today.day)
-          .toList();
-      });
+          tasks = List<Map<String, dynamic>>.from(responseBody)
+              .where(
+                  (task) => DateTime.parse(task['start_time']).day == today.day)
+              .toList();
+        });
       } else if (responseBody is Map && responseBody.containsKey('message')) {
         print('no registered tasks in the store');
       } else {
         throw Exception('Unexpected response format');
       }
     } else {
-      throw Exception('Failed to load tasks in the store. Status code: ${response.statusCode}');
+      throw Exception(
+          'Failed to load tasks in the store. Status code: ${response.statusCode}');
     }
   }
-
 
   Future<bool> _checkIsAdmin(int userId) async {
     final url = Uri.parse('http://143.248.191.173:3001/check_isadmin');
@@ -712,7 +774,7 @@ class _RoomDialogState extends State<RoomDialog> {
     }
 
     final url = Uri.parse('http://143.248.191.173:3001/add_board');
-    print('Adding room with name: $name and description: $description'); 
+    print('Adding room with name: $name and description: $description');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -723,7 +785,8 @@ class _RoomDialogState extends State<RoomDialog> {
       widget.onRoomAdded();
       Navigator.of(context).pop();
     } else {
-      print('Failed to add room. Response status: ${response.statusCode}, body: ${response.body}'); 
+      print(
+          'Failed to add room. Response status: ${response.statusCode}, body: ${response.body}');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('방 추가에 실패했습니다')),
       );

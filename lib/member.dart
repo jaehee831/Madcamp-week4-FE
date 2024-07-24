@@ -1,5 +1,6 @@
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:madcamp_week4_front/main.dart';
 import 'dart:convert';
 import 'package:madcamp_week4_front/worker_profile.dart';
 import 'package:madcamp_week4_front/admin/admin_profile.dart';
@@ -40,7 +41,8 @@ class _MemberState extends State<Member> {
         members = List<Map<String, dynamic>>.from(responseBody);
       });
     } else {
-      throw Exception('Failed to load store members. Status code: ${response.statusCode}');
+      throw Exception(
+          'Failed to load store members. Status code: ${response.statusCode}');
     }
   }
 
@@ -49,6 +51,7 @@ class _MemberState extends State<Member> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('멤버'),
+        backgroundColor: primaryColor,
         actions: [
           IconButton(
             icon: const Icon(Icons.person),
@@ -61,11 +64,14 @@ class _MemberState extends State<Member> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            Image.asset('assets/images/cake.png'),
+            const SizedBox(height: 16.0),
             const Text(
               '멤버',
-              style: TextStyle(fontSize: 16.0),
+              style: TextStyle(fontSize: 24, color: Colors.black),
             ),
             const SizedBox(height: 16.0),
             Expanded(
@@ -73,9 +79,7 @@ class _MemberState extends State<Member> {
                 itemCount: members.length,
                 itemBuilder: (context, index) {
                   final member = members[index];
-                  return ListTile(
-                    title: Text(member['name'])
-                  );
+                  return ListTile(title: Text(member['name']));
                 },
               ),
             ),
@@ -110,9 +114,8 @@ class _MemberState extends State<Member> {
     if (response.statusCode == 200) {
       return jsonDecode(response.body) == 1;
     } else {
-      throw Exception('Failed to check if user is admin. Status code: ${response.statusCode}');
+      throw Exception(
+          'Failed to check if user is admin. Status code: ${response.statusCode}');
     }
   }
-
 }
-

@@ -1,9 +1,11 @@
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'signup_worker.dart'; 
+import 'signup_worker.dart';
 import 'signup_owner.dart';
 import 'package:madcamp_week4_front/homepage.dart';
 import 'dart:convert';
+
+const Color primaryColor = Color(0xFFFFE174);
 
 class SignUpRoleSelect extends StatelessWidget {
   final int userId;
@@ -22,33 +24,59 @@ class SignUpRoleSelect extends StatelessWidget {
 
     return Scaffold(
       body: Center(
-        child: Row(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ElevatedButton(
-              onPressed: () async {
-                bool userSaveSuccess = await _sendUserIdToServer(userId, nickname, 0); // 서버에 사용자 ID 전송
-                if(userSaveSuccess){
-                  await _onWorkerConfirmPressed(context, userId, nickname);
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                minimumSize: Size(screenWidth * 0.3, screenHeight * 0.3), // 버튼 크기 설정
-              ),
-              child: const Text('알바'),
+            Image.asset('assets/images/cake.png'),
+            SizedBox(height: screenHeight * 0.05),
+            const Text(
+              '포지션을 골라주세요',
+              style: TextStyle(fontSize: 24, color: Colors.black),
             ),
-            SizedBox(width: screenWidth * 0.1),
-            ElevatedButton(
-              onPressed: () async {
-                bool userSaveSuccess = await _sendUserIdToServer(userId, nickname, 1); // 서버에 사용자 ID 전송
-                if(userSaveSuccess){
-                  await _onOwnerConfirmPressed(context, userId, nickname);
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                minimumSize: Size(screenWidth * 0.3, screenHeight * 0.3), // 버튼 크기 설정
-              ),
-              child: const Text('점주'),
+            SizedBox(height: screenHeight * 0.1),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: () async {
+                    bool userSaveSuccess = await _sendUserIdToServer(
+                        userId, nickname, 0); // 서버에 사용자 ID 전송
+                    if (userSaveSuccess) {
+                      await _onWorkerConfirmPressed(context, userId, nickname);
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: primaryColor, // 버튼 색상 설정
+                    minimumSize:
+                        Size(screenWidth * 0.3, screenHeight * 0.3), // 버튼 크기 설정
+                  ),
+                  child: const Text(
+                    '알바',
+                    style: TextStyle(
+                        fontSize: 20, color: Colors.black), // 텍스트 크기와 색상 설정
+                  ),
+                ),
+                SizedBox(width: screenWidth * 0.1),
+                ElevatedButton(
+                  onPressed: () async {
+                    bool userSaveSuccess = await _sendUserIdToServer(
+                        userId, nickname, 1); // 서버에 사용자 ID 전송
+                    if (userSaveSuccess) {
+                      await _onOwnerConfirmPressed(context, userId, nickname);
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: primaryColor, // 버튼 색상 설정
+                    minimumSize:
+                        Size(screenWidth * 0.3, screenHeight * 0.3), // 버튼 크기 설정
+                  ),
+                  child: const Text(
+                    '점주',
+                    style: TextStyle(
+                        fontSize: 20, color: Colors.black), // 텍스트 크기와 색상 설정
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -57,13 +85,16 @@ class SignUpRoleSelect extends StatelessWidget {
   }
 }
 
-Future<void> _onOwnerConfirmPressed(BuildContext context, int userId, String nickname) async {
+Future<void> _onOwnerConfirmPressed(
+    BuildContext context, int userId, String nickname) async {
   try {
     String ownerRegisterStore = await _checkUserRegisterStore(userId);
     if (ownerRegisterStore != '') {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => HomePage(userId: userId, storeId: int.parse(ownerRegisterStore))),
+        MaterialPageRoute(
+            builder: (context) => HomePage(
+                userId: userId, storeId: int.parse(ownerRegisterStore))),
       );
     } else {
       Navigator.push(
@@ -78,19 +109,23 @@ Future<void> _onOwnerConfirmPressed(BuildContext context, int userId, String nic
   }
 }
 
-Future<void> _onWorkerConfirmPressed(BuildContext context, int userId, String nickname) async {
+Future<void> _onWorkerConfirmPressed(
+    BuildContext context, int userId, String nickname) async {
   try {
     String workerRegisterStore = await _checkUserRegisterStore(userId);
     if (workerRegisterStore != '') {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => HomePage(userId: userId, storeId: int.parse(workerRegisterStore))),
+        MaterialPageRoute(
+            builder: (context) => HomePage(
+                userId: userId, storeId: int.parse(workerRegisterStore))),
       );
     } else {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => SignupWorker(userId: userId, nickname: nickname),
+          builder: (context) =>
+              SignupWorker(userId: userId, nickname: nickname),
         ),
       );
     }
@@ -99,7 +134,8 @@ Future<void> _onWorkerConfirmPressed(BuildContext context, int userId, String ni
   }
 }
 
-Future<bool> _sendUserIdToServer(int userId, String nickname, int isAdmin) async {
+Future<bool> _sendUserIdToServer(
+    int userId, String nickname, int isAdmin) async {
   final url = Uri.parse('http://143.248.191.173:3001/save_user');
   final response = await http.post(
     url,
@@ -114,7 +150,8 @@ Future<bool> _sendUserIdToServer(int userId, String nickname, int isAdmin) async
   );
   if (response.statusCode == 200) {
     final responseBody = jsonDecode(response.body);
-    if (responseBody['status'] == 'success' || responseBody['message'] == 'User already exists') {
+    if (responseBody['status'] == 'success' ||
+        responseBody['message'] == 'User already exists') {
       print('User ID saved successfully or user already exists');
       return true;
     } else {
@@ -149,6 +186,7 @@ Future<String> _checkUserRegisterStore(int userId) async {
     final responseBody = jsonDecode(response.body);
     throw Exception('Missing Fields: ${responseBody['error']}');
   } else {
-    throw Exception('Failed to load store ids. Status code: ${response.statusCode}');
+    throw Exception(
+        'Failed to load store ids. Status code: ${response.statusCode}');
   }
 }

@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'dart:math';
 import 'dart:convert';
 import 'package:madcamp_week4_front/homepage.dart';
+import 'package:madcamp_week4_front/main.dart';
 
 class SignupOwner extends StatefulWidget {
   final int userId;
@@ -27,7 +28,8 @@ class _SignupOwnerState extends State<SignupOwner> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => SignupStoreRegister(userId: widget.userId, storeName: storeName),
+        builder: (context) =>
+            SignupStoreRegister(userId: widget.userId, storeName: storeName),
       ),
     );
   }
@@ -35,34 +37,53 @@ class _SignupOwnerState extends State<SignupOwner> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('사장님 화면'),
+        title: const Text('가게 등록'),
+        backgroundColor: primaryColor,
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text('아직 등록된 가게가 없어요. 가게를 등록해주세요.'),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: SizedBox(
-                width: kIsWeb ? screenWidth * 0.5 : screenWidth * 0.8, // 웹과 모바일에 따라 크기 조정
-                child: TextField(
-                  controller: _controller,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: '가게 이름',
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset('assets/images/popcorn.png'),
+              SizedBox(height: screenHeight * 0.05),
+              const Text('아직 등록된 가게가 없어요.',
+                  style: TextStyle(fontSize: 20, color: Colors.black)),
+              const Text('가게를 등록해주세요.',
+                  style: TextStyle(fontSize: 20, color: Colors.black)),
+              SizedBox(height: screenHeight * 0.01),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: SizedBox(
+                  width: kIsWeb
+                      ? screenWidth * 0.5
+                      : screenWidth * 0.8, // 웹과 모바일에 따라 크기 조정
+                  child: TextField(
+                    controller: _controller,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: '가게 이름',
+                    ),
                   ),
                 ),
               ),
-            ),
-            ElevatedButton(
-              onPressed: _onRegisterPressed,
-              child: const Text('등록완료'),
-            ),
-          ],
+              SizedBox(height: screenHeight * 0.05),
+              ElevatedButton(
+                onPressed: _onRegisterPressed,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: primaryColor, // 버튼 색상 설정
+                ),
+                child: const Text(
+                  '등록완료',
+                  style: TextStyle(color: Colors.black), // 텍스트 색상 설정
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -73,11 +94,8 @@ class SignupStoreRegister extends StatefulWidget {
   final int userId;
   final String storeName;
 
-  const SignupStoreRegister({
-    super.key,
-    required this.storeName,
-    required this.userId
-  });
+  const SignupStoreRegister(
+      {super.key, required this.storeName, required this.userId});
 
   @override
   _SignupStoreRegisterState createState() => _SignupStoreRegisterState();
@@ -108,24 +126,43 @@ class _SignupStoreRegisterState extends State<SignupStoreRegister> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('가게 등록 완료'),
+        backgroundColor: primaryColor,
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('가게 "${widget.storeName}"가 성공적으로 등록되었습니다!'),
-            const SizedBox(height: 20), // 간격 추가
+            Image.asset('assets/images/beer.png'),
+            const SizedBox(height: 30),
+            Text('가게 "${widget.storeName}"가 성공적으로 등록되었습니다!',
+                style: const TextStyle(fontSize: 16)),
+            const SizedBox(height: 30), // 간격 추가
             const Text('암호키발급'),
-            Text(randomKey, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 20), // 간격 추가
+            const SizedBox(height: 10),
+            Text(randomKey,
+                style:
+                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 30), // 간격 추가
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => HomePage(userId: widget.userId, storeId: storeId)),
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          HomePage(userId: widget.userId, storeId: storeId)),
                 );
               },
-              child: const Text('홈으로 가기'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: primaryColor, // 버튼 색상 설정
+                shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(30), // border radius 30 설정
+                ),
+              ),
+              child: const Text(
+                '홈으로 가기',
+                style: TextStyle(color: Colors.black),
+              ),
             ),
           ],
         ),
@@ -138,16 +175,14 @@ class _SignupStoreRegisterState extends State<SignupStoreRegister> {
     randomKey = random.nextInt(1000000).toString().padLeft(6, '0');
 
     final url = Uri.parse('http://143.248.191.173:3001/save_store');
-    final response = await http.post(
-      url,
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, String>{
-        'store_name': widget.storeName,
-        'password': randomKey
-      })
-    );
+    final response = await http.post(url,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'store_name': widget.storeName,
+          'password': randomKey
+        }));
     if (response.statusCode == 200) {
       print('Store saved successfully');
     } else {
@@ -162,9 +197,7 @@ class _SignupStoreRegisterState extends State<SignupStoreRegister> {
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode(<String, String>{
-        'password': password
-      }),
+      body: jsonEncode(<String, String>{'password': password}),
     );
     print('Response Body: ${response.body}');
     if (response.statusCode == 200) {
@@ -183,16 +216,12 @@ class _SignupStoreRegisterState extends State<SignupStoreRegister> {
 
   Future<void> _saveOwnerStore(int storeId) async {
     final url = Uri.parse('http://143.248.191.173:3001/save_user_store');
-    final response = await http.post(
-      url,
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, int>{
-        'user_id': widget.userId,
-        'store_id': storeId
-      })
-    );
+    final response = await http.post(url,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(
+            <String, int>{'user_id': widget.userId, 'store_id': storeId}));
     if (response.statusCode == 200) {
       print('UserStore saved successfully');
     } else {
@@ -223,6 +252,4 @@ class _SignupStoreRegisterState extends State<SignupStoreRegister> {
     } while (existingKeys.contains(key));
     return key;
   }
-
 }
-
