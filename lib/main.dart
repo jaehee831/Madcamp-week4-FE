@@ -5,6 +5,8 @@ import 'package:madcamp_week4_front/signup/signup_role_select.dart';
 import 'conditional_import.dart';
 import 'package:mysql_client/mysql_client.dart';
 
+const Color primaryColor = Color(0xFFFFE174);
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Flutter binding 초기화
 
@@ -54,11 +56,14 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        scaffoldBackgroundColor: Colors.white,
+          fontFamily: 'gsansmedium'
       ),
       initialRoute: '/',
       routes: {
         '/': (context) => MyHomePage(), // 메인 화면 라우트
       },
+      debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -77,34 +82,64 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            if (_userId != 0) Text('id: $_userId'),
-            if (_nickname.isNotEmpty) Text('Hello, $_nickname!'),
-            ElevatedButton(
-              onPressed: () async {
-                await loginWithKakao(onProfileFetched: (userId, nickname) {
-                  setState(() {
-                    _userId = userId;
-                    _nickname = nickname;
-                  });
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => SignUpRoleSelect(
-                        userId: _userId,
-                        nickname: _nickname,
-                      ),
+      body: Column(
+        children: <Widget>[
+          const Spacer(), // This will push the text and button to the center
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  '반갑습니다!',
+                  style: TextStyle(fontSize: 24),
+                ),
+                const SizedBox(
+                    height: 100), // Adds space between the text and button
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: primaryColor, // 버튼 배경색 지정
+                    shape: RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.circular(30), // border-radius 설정
                     ),
-                  );
-                });
-              },
-              child: const Text('카카오 로그인'),
+                    minimumSize: const Size(
+                        200, 50), // 버튼 너비와 높이 설정 (width: 200, height: 50)
+                  ),
+                  onPressed: () async {
+                    await loginWithKakao(onProfileFetched: (userId, nickname) {
+                      setState(() {
+                        _userId = userId;
+                        _nickname = nickname;
+                      });
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SignUpRoleSelect(
+                            userId: _userId,
+                            nickname: _nickname,
+                          ),
+                        ),
+                      );
+                    });
+                  },
+                  child: const Text('카카오 로그인'),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+          const Spacer(), // This will push the image to the bottom
+          Padding(
+            padding: const EdgeInsets.all(16.0), // 하단에 약간의 여백을 추가
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: Image.asset(
+                'assets/images/logo_for_login.png',
+                width: 185,
+                height: 50,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -87,3 +87,4 @@ class PostDetailPage extends StatelessWidget {
     );
   }
 }
+//댓글 작성기능, post 가져오기 
