@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:madcamp_week4_front/admin/channel_delete.dart';
 import 'package:madcamp_week4_front/admin/admin.dart';
+import 'package:madcamp_week4_front/signup/mobile_logout.dart';
 
 class AdminProfile extends StatefulWidget {
   final int userId;
@@ -42,7 +43,20 @@ class _AdminProfileState extends State<AdminProfile> {
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () {
-              // 로그아웃 동작 추가
+              logoutFromKakao(
+                onLogoutSuccess: () {
+                  Navigator.popUntil(context, (route) => route.isFirst);
+                  Navigator.pushReplacementNamed(context, '/'); // 로그아웃 성공 시 메인화면으로 이동
+                },
+                onLogoutFailed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('로그아웃 실패'),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                },
+              );
             },
           ),
         ],
@@ -110,13 +124,6 @@ class _AdminProfileState extends State<AdminProfile> {
                   );
                 }
               },
-            ),
-            const SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: () {
-                // 수정하기 버튼 동작 추가
-              },
-              child: const Text('수정하기'),
             ),
             const SizedBox(height: 16.0),
             Row(

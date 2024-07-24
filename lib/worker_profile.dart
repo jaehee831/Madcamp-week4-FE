@@ -1,12 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:madcamp_week4_front/member.dart';
+import 'package:madcamp_week4_front/attendance_bot.dart';
+import 'package:madcamp_week4_front/signup/mobile_logout.dart';
 
-class WorkerProfile extends StatelessWidget {
-  final userId;
+class WorkerProfile extends StatefulWidget {
+  final int userId;
 
   const WorkerProfile({
     super.key,
     required this.userId
   });
+
+  @override
+  _WorkerProfileState createState() => _WorkerProfileState();
+}
+
+class _WorkerProfileState extends State<WorkerProfile> {
+  int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +33,20 @@ class WorkerProfile extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () {
-              // 로그아웃 동작 추가
+              logoutFromKakao(
+                onLogoutSuccess: () {
+                  Navigator.popUntil(context, (route) => route.isFirst);
+                  Navigator.pushReplacementNamed(context, '/'); // 로그아웃 성공 시 메인화면으로 이동
+                },
+                onLogoutFailed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('로그아웃 실패'),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                },
+              );
             },
           ),
         ],
@@ -62,25 +85,16 @@ class WorkerProfile extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: () {
-                // 수정하기 버튼 동작 추가
-              },
-              child: const Text('수정하기'),
-            ),
           ],
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: '홈',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: '내 정보',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
@@ -90,4 +104,20 @@ class WorkerProfile extends StatelessWidget {
       ),
     );
   }
+
+  void _onItemTapped(int index) {
+    if (index == 1) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => AttendanceBotPage(userId: widget.userId),
+        ),
+      );
+    } else {
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
+  }
+
 }

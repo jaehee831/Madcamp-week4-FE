@@ -16,7 +16,7 @@ Future<void> main() async {
     print("MySQL 연결에 실패했습니다: $e");
   }
   KakaoSdk.init(
-      nativeAppKey: ''); // Kakao SDK 초기화
+      nativeAppKey: '539252187b3fd001076f5542826102de'); // Kakao SDK 초기화
   runApp(const MyApp());
 }
 
@@ -26,11 +26,11 @@ Future<void> dbConnector() async {
   try {
     // MySQL 접속 설정
     final conn = await MySQLConnection.createConnection(
-      host: '',
-      port: ,
-      userName: '',
-      password: '',
-      databaseName: '', // optional
+      host: '143.248.191.173',
+      port: 3306,
+      userName: 'root',
+      password: 'wogml0913!',
+      databaseName: 'mydb', // optional
     );
 
     // 연결 대기
@@ -55,7 +55,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => MyHomePage(), // 메인 화면 라우트
+      },
     );
   }
 }

@@ -3,14 +3,23 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:madcamp_week4_front/homepage.dart';
 import 'package:madcamp_week4_front/worker_profile.dart';
+import 'package:madcamp_week4_front/member.dart';
+import 'package:madcamp_week4_front/attendance_bot.dart';
 
-class HomepageNoStoreWorker extends StatelessWidget {
+class HomepageNoStoreWorker extends StatefulWidget {
   final int userId;
 
   const HomepageNoStoreWorker({
     super.key,
-    required this.userId
+    required this.userId,
   });
+
+  @override
+  _HomepageNoStoreWorkerState createState() => _HomepageNoStoreWorkerState();
+}
+
+class _HomepageNoStoreWorkerState extends State<HomepageNoStoreWorker> {
+  int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +31,7 @@ class HomepageNoStoreWorker extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => WorkerProfile(userId: userId)),
+                  MaterialPageRoute(builder: (context) => WorkerProfile(userId: widget.userId)),
                 );
             },
           ),
@@ -41,7 +50,7 @@ class HomepageNoStoreWorker extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ChannelAdd(userId: userId),
+                    builder: (context) => ChannelAdd(userId: widget.userId),
                   ),
                 );
               },
@@ -51,23 +60,48 @@ class HomepageNoStoreWorker extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.business),
-            label: 'Business',
+            icon: Icon(Icons.people),
+            label: '멤버',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.school),
-            label: 'School',
+            icon: Icon(Icons.settings),
+            label: '설정',
           ),
         ],
       ),
     );
   }
+
+  void _onItemTapped(int index) {
+    if (index == 1) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('등록된 가게가 없어 멤버를 조회할 수 없습니다'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    } else if (index == 2) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('등록된 가게가 없어 출석체크를 할 수 없습니다'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    } else {
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
+  }
+
 }
 
 

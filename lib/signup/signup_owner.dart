@@ -84,7 +84,7 @@ class SignupStoreRegister extends StatefulWidget {
 }
 
 class _SignupStoreRegisterState extends State<SignupStoreRegister> {
-  late String randomKey;
+  late String randomKey = '';
   late int storeId;
   Set<String> existingKeys = {};
 
@@ -203,6 +203,9 @@ class _SignupStoreRegisterState extends State<SignupStoreRegister> {
   Future<void> _fetchExistingKeys() async {
     final url = Uri.parse('http://143.248.191.173:3001/get_store_pw_list');
     final response = await http.get(url);
+
+    print("get_store_pw_list: ${response.statusCode}");
+    print("get_store_pw_list: ${response.body}");
 
     if (response.statusCode == 200) {
       final List<dynamic> keys = jsonDecode(response.body);

@@ -9,8 +9,10 @@ import 'channel_board_page.dart';
 import 'attendance_bot.dart';
 import 'channel_board_page.dart'; // Import the new channel board page
 import 'package:madcamp_week4_front/worker_profile.dart';
-import 'package:madcamp_week4_front/worker_salary.dart';
 import 'package:madcamp_week4_front/schedule.dart';
+import 'package:madcamp_week4_front/member.dart';
+import 'package:madcamp_week4_front/signup/mobile_logout.dart';
+import 'package:madcamp_week4_front/signup/signup_owner.dart';
 
 class HomePage extends StatefulWidget {
   final int userId;
@@ -55,52 +57,155 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+    Future<List<int>> _getStoreList(int userId) async {
+    final url = Uri.parse('http://143.248.191.173:3001/get_store_list');
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'user_id': userId.toString()}),
+    );
+    if (response.statusCode == 200) {
+      final responseBody = jsonDecode(response.body);
+      if (responseBody.containsKey('storeIds')) {
+        List<int> storeIds = List<int>.from(responseBody['storeIds']);
+        return storeIds;
+      } else {
+        throw Exception('No store registered');
+      }
+    } else if (response.statusCode == 400) {
+      final responseBody = jsonDecode(response.body);
+      throw Exception('Missing Fields: ${responseBody['error']}');
+    } else {
+      throw Exception('Failed to load store ids. Status code: ${response.statusCode}');
+    }
+  }
+
+  Future<String> _getStoreName(int storeId) async {
+    final url = Uri.parse('http://143.248.191.173:3001/get_store_name_list');
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'store_id': storeId.toString()}),
+    );
+    if (response.statusCode == 200) {
+      final responseBody = jsonDecode(response.body);
+      setState(() {
+        storeName = responseBody['store_name'];
+      });
+      return responseBody['store_name'];
+    } else {
+      throw Exception('Failed to load store name. Status code: ${response.statusCode}');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> _getStoreData(int userId) async {
+    try {
+      List<int> storeIds = await _getStoreList(userId);
+      List<Map<String, dynamic>> storeData = [];
+      for (int storeId in storeIds) {
+        String storeName = await _getStoreName(storeId);
+        storeData.add({'id': storeId, 'name': storeName});
+      }
+      return storeData;
+    } catch (e) {
+      throw Exception('Failed to load store data: $e');
+    }
+  }
+
   void _showChannelChangePopup(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('채널 변경'),
-          content: SizedBox(
-            width: double.minPositive,
-            child: ListView(
-              shrinkWrap: true,
-              children: [
-                ListTile(
-                  title: const Text('버거킹 공동점'),
-                  onTap: () {
-                    // 채널 변경 로직 추가
-                  },
+        return FutureBuilder<List<Map<String, dynamic>>>(
+          future: _getStoreData(widget.userId),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return AlertDialog(
+                title: const Text('채널 변경'),
+                content: SizedBox(
+                  width: double.minPositive,
+                  child: Center(child: CircularProgressIndicator()),
                 ),
-                ListTile(
-                  title: const Text('엔제리너스 어은점'),
-                  onTap: () {
-                    // 채널 변경 로직 추가
-                  },
+              );
+            } else if (snapshot.hasError) {
+              return AlertDialog(
+                title: const Text('채널 변경'),
+                content: SizedBox(
+                  width: double.minPositive,
+                  child: Center(child: Text('Failed to load stores')),
                 ),
-                ListTile(
-                  title: const Text('+ 채널 추가하기'),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => HomepageNoStoreWorker(
-                              userId: widget
-                                  .userId)), // Make sure the import is correct
-                    );
-                  },
+                actions: [
+                  TextButton(
+                    child: const Text('닫기'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            } else {
+              final storeData = snapshot.data ?? [];
+              return AlertDialog(
+                title: const Text('채널 변경'),
+                content: SizedBox(
+                  width: double.minPositive,
+                  child: ListView(
+                    shrinkWrap: true,
+                    children: [
+                      for (var store in storeData)
+                        ListTile(
+                          title: Text(store['name']),
+                          onTap: () {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => HomePage(
+                                  userId: widget.userId,
+                                  storeId: store['id'],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ListTile(
+                        title: const Text('+ 채널 추가하기'),
+                        onTap: () async {
+                          bool isAdmin = await _checkIsAdmin(widget.userId);
+                          String nickname = await _fetchUserName(widget.userId);
+                          if (isAdmin) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SignupOwner(
+                                  userId: widget.userId,
+                                  nickname: nickname,
+                                ),
+                              ),
+                            );
+                          } else {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => HomepageNoStoreWorker(userId: widget.userId),
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              child: const Text('닫기'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
+                actions: [
+                  TextButton(
+                    child: const Text('닫기'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            }
+          },
         );
       },
     );
@@ -116,7 +221,14 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _onItemTapped(int index) {
-    if (index == 2) {
+    if(index == 1) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Member(userId: widget.userId, storeId: widget.storeId),
+        ),
+      );
+    } else if (index == 2) {
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -208,7 +320,20 @@ class _HomePageState extends State<HomePage> {
               leading: const Icon(Icons.logout),
               title: const Text('로그아웃'),
               onTap: () {
-                // 로그아웃 클릭 시 동작 추가
+                logoutFromKakao(
+                  onLogoutSuccess: () {
+                    Navigator.popUntil(context, (route) => route.isFirst);
+                    Navigator.pushReplacementNamed(context, '/'); // 로그아웃 성공 시 메인 화면으로 이동
+                  },
+                  onLogoutFailed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('로그아웃 실패'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  },
+                );
               },
             ),
           ],
@@ -329,8 +454,8 @@ class _HomePageState extends State<HomePage> {
             label: '홈',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: '내 정보',
+            icon: Icon(Icons.people),
+            label: '멤버',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
@@ -356,23 +481,6 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Future<void> _getStoreName(int storeId) async {
-    final url = Uri.parse('http://143.248.191.173:3001/get_store_name_list');
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'store_id': storeId}),
-    );
-    if (response.statusCode == 200) {
-      final responseBody = jsonDecode(response.body);
-      setState(() {
-        storeName = responseBody['store_name'];
-      });
-    } else {
-      throw Exception('Failed to load store name. Status code: ${response.statusCode}');
-    }
-  }
-
   Future<bool> _checkIsAdmin(int userId) async {
     final url = Uri.parse('http://143.248.191.173:3001/check_isadmin');
     final response = await http.post(
@@ -380,6 +488,7 @@ class _HomePageState extends State<HomePage> {
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'user_id': userId}),
     );
+    print("check_isadmin: ${response.body}");
     if (response.statusCode == 200) {
       if(jsonDecode(response.body) == 1){
         return true;
