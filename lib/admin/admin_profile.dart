@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:madcamp_week4_front/admin/channel_delete.dart';
 import 'package:madcamp_week4_front/admin/admin.dart';
+import 'package:madcamp_week4_front/main.dart';
 import 'package:madcamp_week4_front/signup/mobile_logout.dart';
 
 class AdminProfile extends StatefulWidget {
@@ -25,7 +26,7 @@ class _AdminProfileState extends State<AdminProfile> {
   void initState() {
     super.initState();
     storeNamesFuture = _getStoreNames(widget.userId);
-    userNameFuture = _getUserName(widget.userId); 
+    userNameFuture = _getUserName(widget.userId);
   }
 
   @override
@@ -33,6 +34,7 @@ class _AdminProfileState extends State<AdminProfile> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('마이페이지'),
+        backgroundColor: primaryColor,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -46,11 +48,12 @@ class _AdminProfileState extends State<AdminProfile> {
               logoutFromKakao(
                 onLogoutSuccess: () {
                   Navigator.popUntil(context, (route) => route.isFirst);
-                  Navigator.pushReplacementNamed(context, '/'); // 로그아웃 성공 시 메인화면으로 이동
+                  Navigator.pushReplacementNamed(
+                      context, '/'); // 로그아웃 성공 시 메인화면으로 이동
                 },
                 onLogoutFailed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
+                    const SnackBar(
                       content: Text('로그아웃 실패'),
                       duration: Duration(seconds: 2),
                     ),
@@ -66,21 +69,17 @@ class _AdminProfileState extends State<AdminProfile> {
         child: Column(
           children: [
             const SizedBox(height: 16.0),
-            CircleAvatar(
-              radius: 50,
-              backgroundColor: Colors.grey[200],
-              child: Icon(
-                Icons.person,
-                size: 80,
-                color: Colors.grey,
-              ),
+            const CircleAvatar(
+              radius: 80,
+              backgroundColor: Color(0xFFFFF0BA),
+              backgroundImage: AssetImage('assets/images/광대.png'),
             ),
-            const SizedBox(height: 16.0),
+            const SizedBox(height: 24.0),
             Container(
               padding: const EdgeInsets.all(16.0),
               decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(8.0),
+                color: primaryColor,
+                borderRadius: BorderRadius.circular(30.0),
               ),
               child: FutureBuilder<String>(
                 future: userNameFuture,
@@ -94,38 +93,40 @@ class _AdminProfileState extends State<AdminProfile> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text('이름', style: TextStyle(fontSize: 16.0)),
-                        const SizedBox(height: 8.0),
-                        Text(snapshot.data!, style: const TextStyle(fontSize: 16.0)),
+                        const SizedBox(height: 16.0),
+                        Text(snapshot.data!,
+                            style: const TextStyle(fontSize: 16.0)),
                       ],
                     );
                   }
                 },
               ),
             ),
-            const SizedBox(height: 16.0),
+            const SizedBox(height: 24.0),
             FutureBuilder<List<String>>(
               future: storeNamesFuture,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
                   return Center(child: Text('오류 발생: ${snapshot.error}'));
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(child: Text('등록된 가게가 없습니다.'));
+                  return const Center(child: Text('등록된 가게가 없습니다.'));
                 } else {
                   final storeNames = snapshot.data!;
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('등록가게', style: TextStyle(fontSize: 16.0)),
+                      const Text('등록가게', style: TextStyle(fontSize: 16.0)),
                       const SizedBox(height: 8.0),
-                      ...storeNames.map((storeName) => Text(storeName, style: TextStyle(fontSize: 16.0))),
+                      ...storeNames.map((storeName) => Text(storeName,
+                          style: const TextStyle(fontSize: 16.0))),
                     ],
                   );
                 }
               },
             ),
-            const SizedBox(height: 16.0),
+            const SizedBox(height: 24.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -133,20 +134,30 @@ class _AdminProfileState extends State<AdminProfile> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => Admin(userId: widget.userId)),
+                      MaterialPageRoute(
+                          builder: (context) => Admin(userId: widget.userId)),
                     );
                   },
-                  child: const Text('관리하기'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: primaryColor, // 버튼 색상 설정
+                  ),
+                  child:
+                      const Text('관리하기', style: TextStyle(color: Colors.black)),
                 ),
                 const SizedBox(width: 16.0),
                 ElevatedButton(
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const ChannelDelete()),
+                      MaterialPageRoute(
+                          builder: (context) => const ChannelDelete()),
                     );
                   },
-                  child: const Text('채널삭제'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: primaryColor, // 버튼 색상 설정
+                  ),
+                  child:
+                      const Text('채널삭제', style: TextStyle(color: Colors.black)),
                 ),
               ],
             ),
@@ -175,7 +186,8 @@ class _AdminProfileState extends State<AdminProfile> {
       final responseBody = jsonDecode(response.body);
       throw Exception('Missing Fields: ${responseBody['error']}');
     } else {
-      throw Exception('Failed to load store ids. Status code: ${response.statusCode}');
+      throw Exception(
+          'Failed to load store ids. Status code: ${response.statusCode}');
     }
   }
 
@@ -190,7 +202,8 @@ class _AdminProfileState extends State<AdminProfile> {
       final responseBody = jsonDecode(response.body);
       return responseBody['store_name'];
     } else {
-      throw Exception('Failed to load store name. Status code: ${response.statusCode}');
+      throw Exception(
+          'Failed to load store name. Status code: ${response.statusCode}');
     }
   }
 
@@ -219,8 +232,8 @@ class _AdminProfileState extends State<AdminProfile> {
       final responseBody = jsonDecode(response.body);
       return responseBody['user_name'];
     } else {
-      throw Exception('Failed to load user name. Status code: ${response.statusCode}');
+      throw Exception(
+          'Failed to load user name. Status code: ${response.statusCode}');
     }
   }
-
 }

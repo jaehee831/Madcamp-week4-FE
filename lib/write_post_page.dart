@@ -15,15 +15,15 @@ class WritePostPage extends StatelessWidget {
             onPressed: () {
               // 글 작성 완료 버튼 동작 추가
             },
-            child: Text(
+            child: const Text(
               '완료',
               style: TextStyle(color: Colors.grey),
             ),
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: const Padding(
+        padding: EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -34,7 +34,7 @@ class WritePostPage extends StatelessWidget {
                 border: UnderlineInputBorder(),
               ),
             ),
-            const SizedBox(height: 16.0),
+            SizedBox(height: 16.0),
             Expanded(
               child: TextField(
                 decoration: InputDecoration(
@@ -48,6 +48,7 @@ class WritePostPage extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: const Color(0xFFFFF0BA),
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),

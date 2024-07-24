@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:madcamp_week4_front/main.dart';
+
 class AttendanceBotPage extends StatefulWidget {
   final int userId;
 
@@ -61,14 +63,18 @@ class _AttendanceBotPageState extends State<AttendanceBotPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: primaryColor,
         title: const Text('출첵봇'),
       ),
       body: Column(
         children: [
+          const SizedBox(height: 20),
+          Image.asset('assets/images/cake.png'),
+          const SizedBox(height: 10),
           const Padding(
             padding: EdgeInsets.all(16.0),
             child: Text(
-              '출첵봇에게 여러분의 출근/퇴근/휴식시간을 알려주세요!',
+              '출첵봇에게 여러분의 근무시간을 알려주세요!',
               style: TextStyle(fontSize: 16),
               textAlign: TextAlign.center,
             ),
@@ -91,23 +97,40 @@ class _AttendanceBotPageState extends State<AttendanceBotPage> {
               children: [
                 ElevatedButton(
                   onPressed: () => _recordAttendance('check_in_time'),
-                  child: const Text('출근'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFF1D3FF), // 버튼 색상 설정
+                  ),
+                  child:
+                      const Text('출근', style: TextStyle(color: Colors.black)),
                 ),
                 ElevatedButton(
                   onPressed: () => _recordAttendance('check_out_time'),
-                  child: const Text('퇴근'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFFFF0BA), // 버튼 색상 설정
+                  ),
+                  child:
+                      const Text('퇴근', style: TextStyle(color: Colors.black)),
                 ),
                 ElevatedButton(
                   onPressed: () => _recordAttendance('break_start_time'),
-                  child: const Text('휴식 시작'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFF1D3FF), // 버튼 색상 설정
+                  ),
+                  child: const Text('휴식 시작',
+                      style: TextStyle(color: Colors.black)),
                 ),
                 ElevatedButton(
                   onPressed: () => _recordAttendance('break_end_time'),
-                  child: const Text('휴식 끝'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFFFF0BA), // 버튼 색상 설정
+                  ),
+                  child:
+                      const Text('휴식 끝', style: TextStyle(color: Colors.black)),
                 ),
               ],
             ),
           ),
+          const SizedBox(height: 16),
         ],
       ),
     );
