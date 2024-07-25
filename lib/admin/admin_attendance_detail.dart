@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:madcamp_week4_front/main.dart';
+
 class AdminAttendanceDetail extends StatelessWidget {
   final int userId;
   final String userName;
@@ -13,28 +15,29 @@ class AdminAttendanceDetail extends StatelessWidget {
   });
 
   Future<List<Map<String, dynamic>>> _fetchWorkDetails(int userId) async {
-    final url = Uri.parse('http://143.248.191.63:3001/get_member_work_time?user_id=$userId');
-    final response = await http.get(
-      url,
-      headers: {'Content-Type': 'application/json'}
-    );
+    final url = Uri.parse(
+        'http://143.248.191.63:3001/get_member_work_time?user_id=$userId');
+    final response =
+        await http.get(url, headers: {'Content-Type': 'application/json'});
     final responseBody = jsonDecode(response.body);
     if (response.statusCode == 200) {
       final records = responseBody['records'];
       return List<Map<String, dynamic>>.from(records);
-    } else if (responseBody.containsKey('message') && responseBody['message'] == 'No records found for the specified user_id') {
+    } else if (responseBody.containsKey('message') &&
+        responseBody['message'] ==
+            'No records found for the specified user_id') {
       return [];
     } else {
-      throw Exception('Failed to load work time. Status code: ${response.statusCode}');
+      throw Exception(
+          'Failed to load work time. Status code: ${response.statusCode}');
     }
   }
 
   Future<String> _fetchTotalHours(int userId) async {
-    final url = Uri.parse('http://143.248.191.63:3001/get_member_work_time?user_id=$userId');
-    final response = await http.get(
-      url,
-      headers: {'Content-Type': 'application/json'}
-    );
+    final url = Uri.parse(
+        'http://143.248.191.63:3001/get_member_work_time?user_id=$userId');
+    final response =
+        await http.get(url, headers: {'Content-Type': 'application/json'});
     final responseBody = jsonDecode(response.body);
     if (response.statusCode == 200) {
       final records = responseBody['records'];
@@ -50,10 +53,13 @@ class AdminAttendanceDetail extends StatelessWidget {
       final hours = totalMinutes ~/ 60;
       final minutes = totalMinutes % 60;
       return '$hours시간 $minutes분';
-    } else if (responseBody.containsKey('message') && responseBody['message'] == 'No records found for the specified user_id') {
+    } else if (responseBody.containsKey('message') &&
+        responseBody['message'] ==
+            'No records found for the specified user_id') {
       return '0시간 0분';
     } else {
-      throw Exception('Failed to load total hours. Status code: ${response.statusCode}');
+      throw Exception(
+          'Failed to load total hours. Status code: ${response.statusCode}');
     }
   }
 
@@ -62,6 +68,7 @@ class AdminAttendanceDetail extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('$userName 출석부'),
+        backgroundColor: primaryColor,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -97,7 +104,8 @@ class AdminAttendanceDetail extends StatelessWidget {
                           const SizedBox(width: 16.0),
                           Text(
                             userName,
-                            style: const TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+                            style: const TextStyle(
+                                fontSize: 24.0, fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
@@ -123,28 +131,42 @@ class AdminAttendanceDetail extends StatelessWidget {
                         final workDetails = snapshot.data!;
                         return ListView(
                           children: workDetails.map((detail) {
-                            DateTime checkIn = DateTime.parse(detail['check_in_time']);
-                            DateTime checkOut = DateTime.parse(detail['check_out_time']);
-                            DateTime breakStart = DateTime.parse(detail['break_start_time']);
-                            DateTime breakEnd = DateTime.parse(detail['break_end_time']);
-                            String formattedDate = "${checkIn.month}/${checkIn.day}";
-                            String checkInTime = "${checkIn.hour}:${checkIn.minute.toString().padLeft(2, '0')}";
-                            String checkOutTime = "${checkOut.hour}:${checkOut.minute.toString().padLeft(2, '0')}";
-                            String breakDuration = "${breakEnd.difference(breakStart).inHours}시간 ${breakEnd.difference(breakStart).inMinutes % 60}분";
+                            DateTime checkIn =
+                                DateTime.parse(detail['check_in_time']);
+                            DateTime checkOut =
+                                DateTime.parse(detail['check_out_time']);
+                            DateTime breakStart =
+                                DateTime.parse(detail['break_start_time']);
+                            DateTime breakEnd =
+                                DateTime.parse(detail['break_end_time']);
+                            String formattedDate =
+                                "${checkIn.month}/${checkIn.day}";
+                            String checkInTime =
+                                "${checkIn.hour}:${checkIn.minute.toString().padLeft(2, '0')}";
+                            String checkOutTime =
+                                "${checkOut.hour}:${checkOut.minute.toString().padLeft(2, '0')}";
+                            String breakDuration =
+                                "${breakEnd.difference(breakStart).inHours}시간 ${breakEnd.difference(breakStart).inMinutes % 60}분";
 
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
-                                  child: Text(formattedDate, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                                  child: Text(formattedDate,
+                                      style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold)),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                  child: Text("출근 $checkInTime  퇴근 $checkOutTime"),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
+                                  child:
+                                      Text("출근 $checkInTime  퇴근 $checkOutTime"),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
                                   child: Text("휴식 $breakDuration"),
                                 ),
                                 const Divider(),

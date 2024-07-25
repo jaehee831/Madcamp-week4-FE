@@ -152,8 +152,8 @@ class _ScheduleState extends State<Schedule> {
                                   margin: const EdgeInsets.only(bottom: 16.0),
                                   padding: const EdgeInsets.all(16.0),
                                   decoration: BoxDecoration(
-                                    color: Colors.grey[200],
-                                    borderRadius: BorderRadius.circular(8.0),
+                                    color: const Color(0xFFFFF0BA),
+                                    borderRadius: BorderRadius.circular(20.0),
                                   ),
                                   child: Column(
                                     crossAxisAlignment:
@@ -232,8 +232,9 @@ class _ScheduleState extends State<Schedule> {
         DateTime today = DateTime.now();
         setState(() {
           tasks = List<Map<String, dynamic>>.from(responseBody)
-            .where((task) => DateTime.parse(task['start_time']).day == today.day)
-            .toList();
+              .where(
+                  (task) => DateTime.parse(task['start_time']).day == today.day)
+              .toList();
         });
       } else if (responseBody is Map && responseBody.containsKey('message')) {
         print('no registered tasks in the store');

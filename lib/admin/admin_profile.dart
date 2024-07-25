@@ -75,7 +75,7 @@ class _AdminProfileState extends State<AdminProfile> {
               child: const Icon(
                 Icons.person,
                 size: 100,
-                color: Color.fromRGBO(56, 235, 205, 1),
+                color: Colors.grey,
               ),
             ),
             const SizedBox(height: 24.0),

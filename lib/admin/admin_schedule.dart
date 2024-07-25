@@ -25,8 +25,7 @@ class _scheduleChooseStoreState extends State<scheduleChooseStore> {
   }
 
   Future<List<Map<String, dynamic>>> _fetchStores(int userId) async {
-    final storeListUrl =
-        Uri.parse('http://143.248.191.63:3001/get_store_list');
+    final storeListUrl = Uri.parse('http://143.248.191.63:3001/get_store_list');
     final storeNameUrl =
         Uri.parse('http://143.248.191.63:3001/get_store_name_list');
 
@@ -108,7 +107,7 @@ class _scheduleChooseStoreState extends State<scheduleChooseStore> {
             return const Center(child: Text('등록된 가게가 없습니다.'));
           } else {
             final stores = snapshot.data!;
-            
+
             return ListView(
               children: stores.map((store) {
                 return ListTile(
@@ -164,8 +163,8 @@ class _AdminScheduleState extends State<AdminSchedule> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('스케줄 추가')),
-      
+      appBar:
+          AppBar(title: const Text('스케줄 추가'), backgroundColor: primaryColor),
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: fetchStoreMembers(widget.storeId),
         builder: (context, snapshot) {
@@ -282,7 +281,11 @@ class _AdminScheduleState extends State<AdminSchedule> {
                     ),
                     ElevatedButton(
                       onPressed: saveTask,
-                      child: const Text('저장'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: primaryColor, // 버튼 색상 설정
+                      ),
+                      child: const Text('저장',
+                          style: TextStyle(fontSize: 16, color: Colors.black)),
                     ),
                   ],
                 ),

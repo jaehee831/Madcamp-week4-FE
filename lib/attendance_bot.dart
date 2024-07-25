@@ -95,37 +95,50 @@ class _AttendanceBotPageState extends State<AttendanceBotPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                ElevatedButton(
-                  onPressed: () => _recordAttendance('check_in_time'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFF1D3FF), // 버튼 색상 설정
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () => _recordAttendance('check_in_time'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFF1D3FF), // 버튼 색상 설정
+                    ),
+                    child:
+                        const Text('출근', style: TextStyle(color: Colors.black)),
                   ),
-                  child:
-                      const Text('출근', style: TextStyle(color: Colors.black)),
                 ),
-                ElevatedButton(
-                  onPressed: () => _recordAttendance('check_out_time'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFFFF0BA), // 버튼 색상 설정
+                const SizedBox(width: 8.0), // 버튼 간격 조절
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () => _recordAttendance('check_out_time'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFFFF0BA), // 버튼 색상 설정
+                    ),
+                    child:
+                        const Text('퇴근', style: TextStyle(color: Colors.black)),
                   ),
-                  child:
-                      const Text('퇴근', style: TextStyle(color: Colors.black)),
                 ),
-                ElevatedButton(
-                  onPressed: () => _recordAttendance('break_start_time'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFF1D3FF), // 버튼 색상 설정
+                const SizedBox(width: 8.0), // 버튼 간격 조절
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () => _recordAttendance('break_start_time'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFF1D3FF), // 버튼 색상 설정
+                    ),
+                    child: const Text('휴식 시작',
+                        style: TextStyle(color: Colors.black),
+                        textAlign: TextAlign.center),
                   ),
-                  child: const Text('휴식 시작',
-                      style: TextStyle(color: Colors.black)),
                 ),
-                ElevatedButton(
-                  onPressed: () => _recordAttendance('break_end_time'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFFFF0BA), // 버튼 색상 설정
+                const SizedBox(width: 8.0), // 버튼 간격 조절
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () => _recordAttendance('break_end_time'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFFFF0BA), // 버튼 색상 설정
+                    ),
+                    child: const Text('휴식 끝',
+                        style: TextStyle(color: Colors.black),
+                        textAlign: TextAlign.center),
                   ),
-                  child:
-                      const Text('휴식 끝', style: TextStyle(color: Colors.black)),
                 ),
               ],
             ),
