@@ -17,6 +17,7 @@ class _UserWagePageState extends State<UserWagePage> {
   int _totalMinutes = 0;
   bool _isLoading = true;
   bool _isAdmin = false;
+  Map<int, double> userWages = {};
   final TextEditingController _controller = TextEditingController();
 
   @override
@@ -26,18 +27,25 @@ class _UserWagePageState extends State<UserWagePage> {
   }
   
   Future<void> _checkAdminAndFetchData() async {
-    bool isAdmin = await _checkIsAdmin(widget.userId);
-    setState(() {
-      _isAdmin = isAdmin;
-    });
+    try {
+      bool isAdmin = await _checkIsAdmin(widget.userId);
+      if (mounted) {
+        setState(() {
+          _isAdmin = isAdmin;
+        });
+      }
 
-    if (!_isAdmin) {
-      await _fetchUserWage();
-      _totalMinutes = await _fetchMemberWorkTime(widget.userId);
-    } else {
-      setState(() {
-        _isLoading = false;
-      });
+      if (!_isAdmin) {
+        await _fetchUserWages();
+        _hourlyRate = userWages[widget.userId] ?? 0.0;
+        _totalMinutes = await _fetchMemberWorkTime(widget.userId);
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -60,26 +68,62 @@ class _UserWagePageState extends State<UserWagePage> {
     }
   }
 
-  Future<void> _fetchUserWage() async {
-    final response = await http.get(
-      Uri.parse('http://143.248.191.63:3001/get_one_user_wage?user_id=${widget.userId}'),
-    );
-    print('get_one_user_wage: ${response.body}');
-    print('get_one_user_wage: ${response.statusCode}');
+  Future<void> _fetchUserWages() async {
+    final url = Uri.parse('http://143.248.191.63:3001/get_user_wage');
+    final response = await http.get(url);
+    print("get_user_wage: ${response.body}");
     if (response.statusCode == 200) {
-      final data = json.decode(response.body);
+      final responseBody = jsonDecode(response.body);
       setState(() {
-        _hourlyRate = double.parse(data['hourly_rate'].toString());
-        _controller.text = _hourlyRate.toString();
-        _isLoading = false;
+        userWages = {
+          for (var wageInfo in responseBody)
+            int.parse(wageInfo['iduser'].toString()): double.parse(wageInfo['hourly_rate'].toString())
+        };
+        _controller.text = (userWages[widget.userId] ?? 0.0).toString();
       });
+      print('userWages: $userWages');
     } else {
-      
-      throw Exception('Failed to load hourly rate');
+      throw Exception('Failed to load user wages. Status code: ${response.statusCode}');
     }
   }
 
-  
+  Future<int> _fetchMemberWorkTime(int userId) async {
+    final url = Uri.parse(
+        'http://143.248.191.63:3001/get_member_work_time?user_id=$userId');
+    final response =
+        await http.get(url, headers: {'Content-Type': 'application/json'});
+    print('get_member_work_time: ${response.body}');
+    print('get_member_work_time: ${response.statusCode}');
+    final responseBody = jsonDecode(response.body);
+    if (response.statusCode == 200) {
+      final records = responseBody['records'];
+      int totalMinutes = 0;
+      for (var record in records) {
+        if (record['check_in_time'] != null && 
+            record['check_out_time'] != null && 
+            record['break_start_time'] != null && 
+            record['break_end_time'] != null) {
+          
+          DateTime checkIn = DateTime.parse(record['check_in_time']);
+          DateTime checkOut = DateTime.parse(record['check_out_time']);
+          DateTime breakStart = DateTime.parse(record['break_start_time']);
+          DateTime breakEnd = DateTime.parse(record['break_end_time']);
+          
+          totalMinutes += checkOut.difference(checkIn).inMinutes;
+          totalMinutes -= breakEnd.difference(breakStart).inMinutes;
+        }
+      }
+      return totalMinutes;
+    } else if (responseBody.containsKey('message') &&
+        responseBody['message'] ==
+            'No records found for the specified user_id') {
+      return 0;
+    } else {
+      throw Exception(
+          'Failed to load work time. Status code: ${response.statusCode}');
+    }
+  }
+
   Future<void> _updateUserWage() async {
     final newRate = double.tryParse(_controller.text);
     if (newRate == null) return;
@@ -104,36 +148,6 @@ class _UserWagePageState extends State<UserWagePage> {
       );
     } else {
       throw Exception('Failed to update hourly rate');
-    }
-  }
-
-  Future<int> _fetchMemberWorkTime(int userId) async {
-    final url = Uri.parse(
-        'http://143.248.191.63:3001/get_member_work_time?user_id=$userId');
-    final response =
-        await http.get(url, headers: {'Content-Type': 'application/json'});
-    print('get_member_work_time: ${response.body}');
-    print('get_member_work_time: ${response.statusCode}');
-    final responseBody = jsonDecode(response.body);
-    if (response.statusCode == 200) {
-      final records = responseBody['records'];
-      int totalMinutes = 0;
-      for (var record in records) {
-        DateTime checkIn = DateTime.parse(record['check_in_time']);
-        DateTime checkOut = DateTime.parse(record['check_out_time']);
-        DateTime breakStart = DateTime.parse(record['break_start_time']);
-        DateTime breakEnd = DateTime.parse(record['break_end_time']);
-        totalMinutes += checkOut.difference(checkIn).inMinutes;
-        totalMinutes -= breakEnd.difference(breakStart).inMinutes;
-      }
-      return totalMinutes;
-    } else if (responseBody.containsKey('message') &&
-        responseBody['message'] ==
-            'No records found for the specified user_id') {
-      return 0;
-    } else {
-      throw Exception(
-          'Failed to load work time. Status code: ${response.statusCode}');
     }
   }
 

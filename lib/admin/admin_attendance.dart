@@ -193,12 +193,19 @@ class _AdminAttendanceState extends State<AdminAttendance> {
       final records = responseBody['records'];
       int totalMinutes = 0;
       for (var record in records) {
-        DateTime checkIn = DateTime.parse(record['check_in_time']);
-        DateTime checkOut = DateTime.parse(record['check_out_time']);
-        DateTime breakStart = DateTime.parse(record['break_start_time']);
-        DateTime breakEnd = DateTime.parse(record['break_end_time']);
-        totalMinutes += checkOut.difference(checkIn).inMinutes;
-        totalMinutes -= breakEnd.difference(breakStart).inMinutes;
+        if (record['check_in_time'] != null && 
+            record['check_out_time'] != null && 
+            record['break_start_time'] != null && 
+            record['break_end_time'] != null) {
+          
+          DateTime checkIn = DateTime.parse(record['check_in_time']);
+          DateTime checkOut = DateTime.parse(record['check_out_time']);
+          DateTime breakStart = DateTime.parse(record['break_start_time']);
+          DateTime breakEnd = DateTime.parse(record['break_end_time']);
+          
+          totalMinutes += checkOut.difference(checkIn).inMinutes;
+          totalMinutes -= breakEnd.difference(breakStart).inMinutes;
+        }
       }
       final hours = totalMinutes ~/ 60;
       final minutes = totalMinutes % 60;

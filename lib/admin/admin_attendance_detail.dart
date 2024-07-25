@@ -21,14 +21,25 @@ class AdminAttendanceDetail extends StatelessWidget {
     final responseBody = jsonDecode(response.body);
     if (response.statusCode == 200) {
       final records = responseBody['records'];
-      return List<Map<String, dynamic>>.from(records);
+      List<Map<String, dynamic>> validRecords = [];
+
+      for (var record in records) {
+        if (record['check_in_time'] != null &&
+            record['check_out_time'] != null &&
+            record['break_start_time'] != null &&
+            record['break_end_time'] != null) {
+          
+          validRecords.add(record);
+        }
+      }
+      return validRecords;
     } else if (responseBody.containsKey('message') && responseBody['message'] == 'No records found for the specified user_id') {
       return [];
     } else {
       throw Exception('Failed to load work time. Status code: ${response.statusCode}');
     }
   }
-
+  
   Future<String> _fetchTotalHours(int userId) async {
     final url = Uri.parse('http://143.248.191.63:3001/get_member_work_time?user_id=$userId');
     final response = await http.get(
@@ -40,12 +51,19 @@ class AdminAttendanceDetail extends StatelessWidget {
       final records = responseBody['records'];
       int totalMinutes = 0;
       for (var record in records) {
-        DateTime checkIn = DateTime.parse(record['check_in_time']);
-        DateTime checkOut = DateTime.parse(record['check_out_time']);
-        DateTime breakStart = DateTime.parse(record['break_start_time']);
-        DateTime breakEnd = DateTime.parse(record['break_end_time']);
-        totalMinutes += checkOut.difference(checkIn).inMinutes;
-        totalMinutes -= breakEnd.difference(breakStart).inMinutes;
+        if (record['check_in_time'] != null && 
+            record['check_out_time'] != null && 
+            record['break_start_time'] != null && 
+            record['break_end_time'] != null) {
+          
+          DateTime checkIn = DateTime.parse(record['check_in_time']);
+          DateTime checkOut = DateTime.parse(record['check_out_time']);
+          DateTime breakStart = DateTime.parse(record['break_start_time']);
+          DateTime breakEnd = DateTime.parse(record['break_end_time']);
+          
+          totalMinutes += checkOut.difference(checkIn).inMinutes;
+          totalMinutes -= breakEnd.difference(breakStart).inMinutes;
+        }
       }
       final hours = totalMinutes ~/ 60;
       final minutes = totalMinutes % 60;

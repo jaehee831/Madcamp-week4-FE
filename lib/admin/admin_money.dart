@@ -211,36 +211,33 @@ class _AdminMoneyState extends State<AdminMoney> {
   }
 
   Future<int> _fetchMemberWorkTime(int userId) async {
-    final url = Uri.parse('http://143.248.191.63:3001/get_member_work_time?user_id=$userId');
-    final response = await http.get(
-      url,
-      headers: {'Content-Type': 'application/json'}
-    );
-    print("get_member_work_time: ${response.statusCode}");
-    print("get_member_work_time: ${response.body}");
+    final url = Uri.parse(
+        'http://143.248.191.63:3001/get_member_work_time?user_id=$userId');
+    final response =
+        await http.get(url, headers: {'Content-Type': 'application/json'});
+    print('get_member_work_time: ${response.body}');
+    print('get_member_work_time: ${response.statusCode}');
     final responseBody = jsonDecode(response.body);
     if (response.statusCode == 200) {
-      if (responseBody is Map<String, dynamic> &&
-          responseBody.containsKey('records')) {
-        final records = responseBody['records'] as List<dynamic>;
-        int totalMinutes = 0;
-        DateTime now = DateTime.now();
-        for (var record in records) {
-          var recordMap = record as Map<String, dynamic>;
-          DateTime checkIn = DateTime.parse(recordMap['check_in_time']);
-          DateTime checkOut = DateTime.parse(recordMap['check_out_time']);
-          DateTime breakStart = DateTime.parse(recordMap['break_start_time']);
-          DateTime breakEnd = DateTime.parse(recordMap['break_end_time']);
-          if (checkIn.month == now.month && checkIn.year == now.year) {
-            totalMinutes += checkOut.difference(checkIn).inMinutes;
-            totalMinutes -= breakEnd.difference(breakStart).inMinutes;
-          }
+      final records = responseBody['records'];
+      int totalMinutes = 0;
+      for (var record in records) {
+        if (record['check_in_time'] != null && 
+            record['check_out_time'] != null && 
+            record['break_start_time'] != null && 
+            record['break_end_time'] != null) {
+          
+          DateTime checkIn = DateTime.parse(record['check_in_time']);
+          DateTime checkOut = DateTime.parse(record['check_out_time']);
+          DateTime breakStart = DateTime.parse(record['break_start_time']);
+          DateTime breakEnd = DateTime.parse(record['break_end_time']);
+          
+          totalMinutes += checkOut.difference(checkIn).inMinutes;
+          totalMinutes -= breakEnd.difference(breakStart).inMinutes;
+          print('Record processed: checkIn=$checkIn, checkOut=$checkOut, breakStart=$breakStart, breakEnd=$breakEnd, totalMinutes=$totalMinutes');
         }
-        print('Total minutes for user $userId: $totalMinutes');
-        return totalMinutes; // Return total minutes
-      } else {
-        throw Exception('Unexpected response format.');
       }
+      return totalMinutes;
     } else if (responseBody.containsKey('message') &&
         responseBody['message'] ==
             'No records found for the specified user_id') {
@@ -304,7 +301,7 @@ class _AdminMoneyState extends State<AdminMoney> {
                       MaterialPageRoute(
                         builder: (context) => MoneyDetail(
                           name: member['name'],
-                          hours: (totalMinutes / 60).floor(),
+                          totalMinutes: totalMinutes,
                           salary: monthlySalary.toInt(),
                         ),
                       ),
