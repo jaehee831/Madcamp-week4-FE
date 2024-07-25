@@ -77,7 +77,7 @@ class _WritePostPageState extends State<WritePostPage> {
   }
 
   Future<void> _savePost() async {
-    final url = Uri.parse('http://143.248.191.173:3001/create_posts');
+    final url = Uri.parse('http://143.248.191.63:3001/create_posts');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},

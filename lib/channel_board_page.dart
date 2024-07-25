@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'post_detail_page.dart';
 import 'package:madcamp_week4_front/main.dart';
-import 'post_detail_page.dart'; // Import the new post detail page
 import 'write_post_page.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -170,33 +169,41 @@ class _ChannelBoardPageState extends State<ChannelBoardPage> {
   }
 
   Future<void> _fetchPosts(int boardId) async {
-    final url = Uri.parse('http://143.248.191.173:3001/get_posts');
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'board_id': boardId}),
-    );
-    print("get_posts: ${response.statusCode}");
-    print("get_posts: ${response.body}");
-    if (response.statusCode == 200) {
-      final responseBody = jsonDecode(response.body);
-      if (responseBody is Map && responseBody.containsKey('message') && responseBody['message'] == 'no post in the board') {
-        setState(() {
-          posts = [];
-        });
-      } else {
-        final fetchedPosts = List<Map<String, dynamic>>.from(responseBody);
-        final fetchedUserNames = await Future.wait(fetchedPosts.map((post) => _getUserName(post['user_id'])).toList());
+    try {
+      final url = Uri.parse('http://143.248.191.63:3001/get_posts');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'board_id': boardId}),
+      );
+      print("get_posts: ${response.statusCode}");
+      print("get_posts: ${response.body}");
 
-        setState(() {
-          posts = fetchedPosts;
-          for (int i = 0; i < posts.length; i++) {
-            userNames[posts[i]['user_id']] = fetchedUserNames[i];
-          }
-        });
+      if (response.statusCode == 200) {
+        final responseBody = jsonDecode(response.body);
+        if (responseBody is Map && responseBody.containsKey('message') && responseBody['message'] == 'no post in the board') {
+          setState(() {
+            posts = [];
+          });
+        } else {
+          final fetchedPosts = List<Map<String, dynamic>>.from(responseBody);
+          final fetchedUserNames = await Future.wait(fetchedPosts.map((post) => _getUserName(post['user_id'])).toList());
+
+          setState(() {
+            posts = fetchedPosts;
+            for (int i = 0; i < posts.length; i++) {
+              userNames[posts[i]['user_id']] = fetchedUserNames[i];
+            }
+          });
+        }
+      } else {
+        throw Exception('Failed to load posts');
       }
-    } else {
-      throw Exception('Failed to load posts');
+    } catch (e) {
+      print("Error in _fetchPosts: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('게시물을 불러오는 중 오류가 발생했습니다')),
+      );
     }
   }
 
@@ -206,7 +213,7 @@ class _ChannelBoardPageState extends State<ChannelBoardPage> {
   }
 
   Future<String> _getUserName(int userId) async {
-    final url = Uri.parse('http://143.248.191.173:3001/get_user_name');
+    final url = Uri.parse('http://143.248.191.63:3001/get_user_name');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},

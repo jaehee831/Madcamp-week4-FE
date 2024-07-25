@@ -1,3 +1,4 @@
+import 'package:flutter/rendering.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'dart:convert';
@@ -24,7 +25,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String _notice = '공지 사항을 불러오는 중...';
+  String _notice = '공지 사항이 없습니다';
   late String storeName = '';
   late List<Map<String, dynamic>> tasks = [];
   late Map<int, int> userWages = {};
@@ -42,9 +43,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _fetchNotice() async {
-    final url = Uri.parse('http://143.248.191.173:3001/get_notice');
+    final url = Uri.parse('http://143.248.191.63:3001/get_notice?idstore=${widget.storeId}');
     final response = await http.get(url);
-
+    print("get_notice: ${response.body}");
+    print("get_notice: ${response.statusCode}");
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       setState(() {
@@ -59,7 +61,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<String> _fetchUserName(int userId) async {
     final response = await http.post(
-      Uri.parse('http://143.248.191.173:3001/get_user_name'),
+      Uri.parse('http://143.248.191.63:3001/get_user_name'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -79,7 +81,7 @@ class _HomePageState extends State<HomePage> {
   List<Map<String, dynamic>> _rooms = [];
 
   Future<void> _fetchRooms() async {
-    final url = Uri.parse('http://143.248.191.173:3001/get_boards');
+    final url = Uri.parse('http://143.248.191.63:3001/get_boards');
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -93,7 +95,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<List<int>> _getStoreList(int userId) async {
-    final url = Uri.parse('http://143.248.191.173:3001/get_store_list');
+    final url = Uri.parse('http://143.248.191.63:3001/get_store_list');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -117,7 +119,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<String> _getStoreName(int storeId) async {
-    final url = Uri.parse('http://143.248.191.173:3001/get_store_name_list');
+    final url = Uri.parse('http://143.248.191.63:3001/get_store_name_list');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -652,7 +654,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _fetchUserWages() async {
-    final url = Uri.parse('http://143.248.191.173:3001/get_user_wage');
+    final url = Uri.parse('http://143.248.191.63:3001/get_user_wage');
     final response = await http.get(url);
     if (response.statusCode == 200) {
       final responseBody = jsonDecode(response.body);
@@ -671,7 +673,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<int> _fetchMemberWorkTime(int userId) async {
     final url = Uri.parse(
-        'http://143.248.191.173:3001/get_member_work_time?user_id=$userId');
+        'http://143.248.191.63:3001/get_member_work_time?user_id=$userId');
     final response =
         await http.get(url, headers: {'Content-Type': 'application/json'});
     print('get_member_work_time: ${response.body}');
@@ -700,7 +702,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _fetchTasks(int storeId) async {
-    final url = Uri.parse('http://143.248.191.173:3001/get_tasks');
+    final url = Uri.parse('http://143.248.191.63:3001/get_tasks');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -730,7 +732,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<bool> _checkIsAdmin(int userId) async {
-    final url = Uri.parse('http://143.248.191.173:3001/check_isadmin');
+    final url = Uri.parse('http://143.248.191.63:3001/check_isadmin');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -773,7 +775,7 @@ class _RoomDialogState extends State<RoomDialog> {
       return;
     }
 
-    final url = Uri.parse('http://143.248.191.173:3001/add_board');
+    final url = Uri.parse('http://143.248.191.63:3001/add_board');
     print('Adding room with name: $name and description: $description');
     final response = await http.post(
       url,

@@ -110,7 +110,7 @@ class _WorkerProfileState extends State<WorkerProfile> {
   }
 
   Future<String> _getUserName(int userId) async {
-    final url = Uri.parse('http://143.248.191.173:3001/get_user_name');
+    final url = Uri.parse('http://143.248.191.63:3001/get_user_name');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -125,7 +125,7 @@ class _WorkerProfileState extends State<WorkerProfile> {
   }
 
   Future<List<int>> _getStoreList(int userId) async {
-    final url = Uri.parse('http://143.248.191.173:3001/get_store_list');
+    final url = Uri.parse('http://143.248.191.63:3001/get_store_list');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -148,7 +148,7 @@ class _WorkerProfileState extends State<WorkerProfile> {
   }
 
   Future<String> _getStoreName(int storeId) async {
-    final url = Uri.parse('http://143.248.191.173:3001/get_store_name_list');
+    final url = Uri.parse('http://143.248.191.63:3001/get_store_name_list');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},

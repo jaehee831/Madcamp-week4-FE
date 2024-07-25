@@ -21,7 +21,7 @@ class _AttendanceBotPageState extends State<AttendanceBotPage> {
     final String formattedTime =
         "${now.month}/${now.day} ${now.hour}:${now.minute}";
 
-    const String apiUrl = 'http://143.248.191.173:3001/attendance_record';
+    const String apiUrl = 'http://143.248.191.63:3001/attendance_record';
 
     final response = await http.post(
       Uri.parse(apiUrl),
@@ -29,7 +29,7 @@ class _AttendanceBotPageState extends State<AttendanceBotPage> {
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, dynamic>{
-        'userId': 1,
+        'userId': widget.userId,
         'type': type,
         'time': now.toIso8601String(),
       }),

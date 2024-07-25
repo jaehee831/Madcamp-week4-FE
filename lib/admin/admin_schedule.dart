@@ -26,9 +26,9 @@ class _scheduleChooseStoreState extends State<scheduleChooseStore> {
 
   Future<List<Map<String, dynamic>>> _fetchStores(int userId) async {
     final storeListUrl =
-        Uri.parse('http://143.248.191.173:3001/get_store_list');
+        Uri.parse('http://143.248.191.63:3001/get_store_list');
     final storeNameUrl =
-        Uri.parse('http://143.248.191.173:3001/get_store_name_list');
+        Uri.parse('http://143.248.191.63:3001/get_store_name_list');
 
     final storeListResponse = await http.post(
       storeListUrl,
@@ -296,7 +296,7 @@ class _AdminScheduleState extends State<AdminSchedule> {
   // Function to get users from the server
   Future<List<Map<String, dynamic>>> fetchStoreMembers(int storeId) async {
     final response = await http.post(
-      Uri.parse('http://143.248.191.173:3001/get_store_members'),
+      Uri.parse('http://143.248.191.63:3001/get_store_members'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'store_id': storeId}),
     );
@@ -326,7 +326,7 @@ class _AdminScheduleState extends State<AdminSchedule> {
       };
 
       final response = await http.post(
-        Uri.parse('http://143.248.191.173:3001/add_task'),
+        Uri.parse('http://143.248.191.63:3001/add_task'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode(taskData),
       );

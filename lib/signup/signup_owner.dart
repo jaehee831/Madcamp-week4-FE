@@ -174,7 +174,7 @@ class _SignupStoreRegisterState extends State<SignupStoreRegister> {
     final random = Random();
     randomKey = random.nextInt(1000000).toString().padLeft(6, '0');
 
-    final url = Uri.parse('http://143.248.191.173:3001/save_store');
+    final url = Uri.parse('http://143.248.191.63:3001/save_store');
     final response = await http.post(url,
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
@@ -191,7 +191,7 @@ class _SignupStoreRegisterState extends State<SignupStoreRegister> {
   }
 
   Future<void> _getStoreIdFromPassword(String password) async {
-    final url = Uri.parse('http://143.248.191.173:3001/get_store_id');
+    final url = Uri.parse('http://143.248.191.63:3001/get_store_id');
     final response = await http.post(
       url,
       headers: <String, String>{
@@ -215,7 +215,7 @@ class _SignupStoreRegisterState extends State<SignupStoreRegister> {
   }
 
   Future<void> _saveOwnerStore(int storeId) async {
-    final url = Uri.parse('http://143.248.191.173:3001/save_user_store');
+    final url = Uri.parse('http://143.248.191.63:3001/save_user_store');
     final response = await http.post(url,
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
@@ -230,7 +230,7 @@ class _SignupStoreRegisterState extends State<SignupStoreRegister> {
   }
 
   Future<void> _fetchExistingKeys() async {
-    final url = Uri.parse('http://143.248.191.173:3001/get_store_pw_list');
+    final url = Uri.parse('http://143.248.191.63:3001/get_store_pw_list');
     final response = await http.get(url);
 
     print("get_store_pw_list: ${response.statusCode}");

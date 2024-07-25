@@ -42,7 +42,10 @@ class SignUpRoleSelect extends StatelessWidget {
                     bool userSaveSuccess = await _sendUserIdToServer(
                         userId, nickname, 0); // 서버에 사용자 ID 전송
                     if (userSaveSuccess) {
-                      await _onWorkerConfirmPressed(context, userId, nickname);
+                      bool wageInitializeSuccess = await initializeUserWage(userId);
+                      if(wageInitializeSuccess) {
+                        await _onWorkerConfirmPressed(context, userId, nickname);
+                      }
                     }
                   },
                   style: ElevatedButton.styleFrom(
@@ -62,7 +65,10 @@ class SignUpRoleSelect extends StatelessWidget {
                     bool userSaveSuccess = await _sendUserIdToServer(
                         userId, nickname, 1); // 서버에 사용자 ID 전송
                     if (userSaveSuccess) {
-                      await _onOwnerConfirmPressed(context, userId, nickname);
+                      bool wageInitializeSuccess = await initializeUserWage(userId);
+                      if(wageInitializeSuccess) {
+                        await _onOwnerConfirmPressed(context, userId, nickname);
+                      }
                     }
                   },
                   style: ElevatedButton.styleFrom(
@@ -88,21 +94,31 @@ class SignUpRoleSelect extends StatelessWidget {
 Future<void> _onOwnerConfirmPressed(
     BuildContext context, int userId, String nickname) async {
   try {
-    String ownerRegisterStore = await _checkUserRegisterStore(userId);
-    if (ownerRegisterStore != '') {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => HomePage(
-                userId: userId, storeId: int.parse(ownerRegisterStore))),
-      );
-    } else {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => SignupOwner(userId: userId, nickname: nickname),
+    bool isAdmin = await _checkIsAdmin(userId);
+    if (!isAdmin) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('알바생으로 등록된 계정입니다.'),
+          duration: Duration(seconds: 2),
         ),
       );
+    } else {
+      String ownerRegisterStore = await _checkUserRegisterStore(userId);
+      if (ownerRegisterStore != '') {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => HomePage(
+                  userId: userId, storeId: int.parse(ownerRegisterStore))),
+        );
+      } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SignupOwner(userId: userId, nickname: nickname),
+          ),
+        );
+      }
     }
   } catch (e) {
     print(e); // 예외 메시지를 출력
@@ -112,22 +128,32 @@ Future<void> _onOwnerConfirmPressed(
 Future<void> _onWorkerConfirmPressed(
     BuildContext context, int userId, String nickname) async {
   try {
-    String workerRegisterStore = await _checkUserRegisterStore(userId);
-    if (workerRegisterStore != '') {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => HomePage(
-                userId: userId, storeId: int.parse(workerRegisterStore))),
-      );
-    } else {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) =>
-              SignupWorker(userId: userId, nickname: nickname),
+    bool isAdmin = await _checkIsAdmin(userId);
+    if (isAdmin) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('점주로 등록된 계정입니다.'),
+          duration: Duration(seconds: 2),
         ),
       );
+    } else {
+      String workerRegisterStore = await _checkUserRegisterStore(userId);
+      if (workerRegisterStore != '') {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => HomePage(
+                  userId: userId, storeId: int.parse(workerRegisterStore))),
+        );
+      } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                SignupWorker(userId: userId, nickname: nickname),
+          ),
+        );
+      }
     }
   } catch (e) {
     print(e); // 예외 메시지를 출력
@@ -136,7 +162,7 @@ Future<void> _onWorkerConfirmPressed(
 
 Future<bool> _sendUserIdToServer(
     int userId, String nickname, int isAdmin) async {
-  final url = Uri.parse('http://143.248.191.173:3001/save_user');
+  final url = Uri.parse('http://143.248.191.63:3001/save_user');
   final response = await http.post(
     url,
     headers: <String, String>{
@@ -165,8 +191,25 @@ Future<bool> _sendUserIdToServer(
   }
 }
 
+Future<bool> initializeUserWage(int userId) async {
+  final url = Uri.parse('http://143.248.191.63:3001/add_user_wage');
+  final response = await http.post(
+    url,
+    headers: {'Content-Type': 'application/json'},
+    body: jsonEncode({'user_id': userId}),
+  );
+  print("add_user_wage: ${response.body}");
+  print("add_user_wage: ${response.statusCode}");
+  if (response.statusCode == 200) {
+    return true;
+  } else {
+    print('failed to initialize user wage');
+    return false;
+  }
+}
+
 Future<String> _checkUserRegisterStore(int userId) async {
-  final url = Uri.parse('http://143.248.191.173:3001/get_store_list');
+  final url = Uri.parse('http://143.248.191.63:3001/get_store_list');
   final response = await http.post(
     url,
     headers: {'Content-Type': 'application/json'},
@@ -188,5 +231,20 @@ Future<String> _checkUserRegisterStore(int userId) async {
   } else {
     throw Exception(
         'Failed to load store ids. Status code: ${response.statusCode}');
+  }
+}
+
+Future<bool> _checkIsAdmin(int userId) async {
+  final url = Uri.parse('http://143.248.191.63:3001/check_isadmin');
+  final response = await http.post(
+    url,
+    headers: {'Content-Type': 'application/json'},
+    body: jsonEncode({'user_id': userId}),
+  );
+  if (response.statusCode == 200) {
+    return jsonDecode(response.body) == 1;
+  } else {
+    throw Exception(
+        'Failed to check if user is admin. Status code: ${response.statusCode}');
   }
 }

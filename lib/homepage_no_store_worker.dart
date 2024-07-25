@@ -170,7 +170,7 @@ class _ChannelAddState extends State<ChannelAdd> {
   }
 
   Future<int> _getStoreIdFromPassword(String password) async {
-    final url = Uri.parse('http://143.248.191.173:3001/get_store_id');
+    final url = Uri.parse('http://143.248.191.63:3001/get_store_id');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json; charset=UTF-8'},
@@ -185,7 +185,7 @@ class _ChannelAddState extends State<ChannelAdd> {
   }
 
   Future<bool> _saveUserStore(int userId, int storeId) async {
-    final url = Uri.parse('http://143.248.191.173:3001/save_user_store');
+    final url = Uri.parse('http://143.248.191.63:3001/save_user_store');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json; charset=UTF-8'},

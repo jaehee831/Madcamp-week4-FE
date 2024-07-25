@@ -30,7 +30,10 @@ class PostDetailPage extends StatefulWidget {
   });
 
   @override
-  _PostDetailPageState createState() => _PostDetailPageState();
+  _PostDetailPageState createState() {
+    print('PostDetailPage createState 호출됨');
+    return _PostDetailPageState();
+  } 
 }
 
 class _PostDetailPageState extends State<PostDetailPage> {
@@ -42,6 +45,18 @@ class _PostDetailPageState extends State<PostDetailPage> {
   void initState() {
     super.initState();
     likeCount = widget.likes;
+    // 모든 위젯 데이터 출력
+    print('PostDetailPage 데이터:');
+    print('userId: ${widget.userId}');
+    print('channelName: ${widget.channelName}');
+    print('boardId: ${widget.boardId}');
+    print('description: ${widget.description}');
+    print('postTitle: ${widget.postTitle}');
+    print('postContent: ${widget.postContent}');
+    print('author: ${widget.author}');
+    print('timestamp: ${widget.timestamp}');
+    print('likes: ${widget.likes}');
+    print('postId: ${widget.postId}');
     _fetchComments(widget.postId);
   }
 
@@ -113,51 +128,62 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                 }
                               },
                             ),
-                            subtitle: Text(comment['content']),
-                            trailing: Text(DateFormat('MM/dd HH:mm').format(DateTime.parse(comment['time']))),
+                            subtitle: Text(comment['content'] ?? 'No content'),
+                            trailing: Text(
+                              comment['time'] != null
+                                  ? DateFormat('MM/dd HH:mm').format(DateTime.parse(comment['time']))
+                                  : 'No timestamp',
+                            ),
                           ),
                       ],
                     ),
             ),
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _commentController,
-                  decoration: InputDecoration(
-                    hintText: '댓글을 입력하세요',
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _commentController,
+                    decoration: InputDecoration(
+                      hintText: '댓글을 입력하세요',
+                    ),
                   ),
                 ),
-              ),
-              IconButton(
-                icon: Icon(Icons.send),
-                onPressed: _saveComment,
-              ),
-            ],
-          ),
-        ],
+                IconButton(
+                  icon: Icon(Icons.send),
+                  onPressed: _saveComment,
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   Future<void> _updateLikeCount() async {
-    final url = Uri.parse('http://143.248.191.173:3001/edit_like_count');
-    final response = await http.put(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'idpost': widget.postId, 'like_count': likeCount}),
-    );
-    print("edit_like_count: ${response.body}");
-    print("edit_like_count: ${response.statusCode}");
-    if (response.statusCode == 200) {
-      final responseBody = jsonDecode(response.body);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(responseBody['message'])),
+    try {
+      final url = Uri.parse('http://143.248.191.63:3001/edit_like_count');
+      final response = await http.put(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'idpost': widget.postId, 'like_count': likeCount}),
       );
-    } else {
+      print("edit_like_count: ${response.body}");
+      print("edit_like_count: ${response.statusCode}");
+      if (response.statusCode == 200) {
+        final responseBody = jsonDecode(response.body);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(responseBody['message'])),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to update like count')),
+        );
+      }
+    } catch (e) {
+      print("Error in _updateLikeCount: $e");
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to update like count')),
+        SnackBar(content: Text('좋아요 수를 업데이트하는 중 오류가 발생했습니다')),
       );
     }
   }
@@ -170,79 +196,99 @@ class _PostDetailPageState extends State<PostDetailPage> {
   }
 
   Future<void> _saveComment() async {
-    final url = Uri.parse('http://143.248.191.173:3001/save_comment');
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'idpost': widget.postId,
-        'content': _commentController.text,
-        'parent_comment_id': 0,
-        'user_id': widget.userId
-      }),
-    );
-    print("save_comment: ${response.body}");
-    print("save_comment: ${response.statusCode}");
-    if (response.statusCode == 200) {
-      setState(() {
-        comments.add({
+    try {
+      final url = Uri.parse('http://143.248.191.63:3001/save_comment');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'idpost': widget.postId,
           'content': _commentController.text,
-          'user_id': widget.userId,
-          'timestamp': DateTime.now().toString(),
-        });
-        _commentController.clear();
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Comment added successfully')),
+          'parent_comment_id': 0,
+          'user_id': widget.userId
+        }),
       );
-    } else {
+
+      print("save_comment: ${response.body}");
+      print("save_comment: ${response.statusCode}");
+
+      if (response.statusCode == 200) {
+        setState(() {
+          comments.add({
+            'content': _commentController.text,
+            'user_id': widget.userId,
+            'time': DateTime.now().toString(),
+          });
+          _commentController.clear();
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('댓글이 성공적으로 추가되었습니다.')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('댓글 추가 실패')),
+        );
+      }
+    } catch (e) {
+      print("Error in _saveComment: $e");
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to add comment')),
+        SnackBar(content: Text('댓글을 저장하는 중 오류가 발생했습니다')),
       );
     }
   }
 
   Future<String> _getUserName(int userId) async {
-    final url = Uri.parse('http://143.248.191.173:3001/get_user_name');
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'user_id': userId}),
-    );
-    print("get_user_name: ${response.body}");
-    print("get_user_name: ${response.statusCode}");
-    if (response.statusCode == 200) {
-      final responseBody = jsonDecode(response.body);
-      return responseBody['user_name'];
-    } else {
-      throw Exception('Failed to load user name. Status code: ${response.statusCode}');
+    try {
+      final url = Uri.parse('http://143.248.191.63:3001/get_user_name');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'user_id': userId}),
+      );
+      print("get_user_name: ${response.body}");
+      print("get_user_name: ${response.statusCode}");
+      if (response.statusCode == 200) {
+        final responseBody = jsonDecode(response.body);
+        return responseBody['user_name'];
+      } else {
+        throw Exception('Failed to load user name. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print("Error in _getUserName: $e");
+      return 'Unknown';
     }
   }
 
   Future<void> _fetchComments(int postId) async {
-    final url = Uri.parse('http://143.248.191.173:3001/get_comments');
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'post_id': postId}),
-    );
-    print("get_comments: ${response.body}");
-    print("get_comments: ${response.statusCode}");
-    if (response.statusCode == 200) {
-      final responseBody = jsonDecode(response.body);
-      if (responseBody is Map && responseBody.containsKey('message') && responseBody['message'] == 'no comments found') {
-        setState(() {
-          comments = [];
-        });
+    try {
+      print('fetchComments 호출됨, postId: $postId');
+      final url = Uri.parse('http://143.248.191.63:3001/get_comments');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'post_id': postId}),
+      );
+      print("get_comments: ${response.body}");
+      print("get_comments: ${response.statusCode}");
+      if (response.statusCode == 200) {
+        final responseBody = jsonDecode(response.body);
+        if (responseBody is Map && responseBody.containsKey('message') && responseBody['message'] == 'no comments found') {
+          setState(() {
+            comments = [];
+          });
+        } else {
+          setState(() {
+            comments = List<Map<String, dynamic>>.from(responseBody);
+          });
+        }
       } else {
-        setState(() {
-          comments = List<Map<String, dynamic>>.from(responseBody);
-        });
+        throw Exception('Failed to load comments');
       }
-    } else {
-      throw Exception('Failed to load comments');
+    } catch (e) {
+      print("Error in _fetchComments: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('댓글을 불러오는 중 오류가 발생했습니다')),
+      );
     }
   }
-
 }
-//댓글 작성기능, post 가져오기 

@@ -26,8 +26,8 @@ class _noticeChooseStoreState extends State<noticeChooseStore> {
   }
 
   Future<List<Map<String, dynamic>>> _fetchStores(int userId) async {
-    final storeListUrl = Uri.parse('http://143.248.191.173:3001/get_store_list');
-    final storeNameUrl = Uri.parse('http://143.248.191.173:3001/get_store_name_list');
+    final storeListUrl = Uri.parse('http://143.248.191.63:3001/get_store_list');
+    final storeNameUrl = Uri.parse('http://143.248.191.63:3001/get_store_name_list');
 
     final storeListResponse = await http.post(
       storeListUrl,
@@ -159,7 +159,7 @@ class _AdminNoticeState extends State<AdminNotice> {
         return;
       }
 
-      final url = Uri.parse('http://143.248.191.173:3001/edit_notice');
+      final url = Uri.parse('http://143.248.191.63:3001/edit_notice');
       final response = await http.put(
         url,
         headers: {'Content-Type': 'application/json'},

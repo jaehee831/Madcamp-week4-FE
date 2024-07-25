@@ -26,8 +26,8 @@ class _moneyChooseStoreState extends State<moneyChooseStore> {
   }
 
   Future<List<Map<String, dynamic>>> _fetchStores(int userId) async {
-    final storeListUrl = Uri.parse('http://143.248.191.173:3001/get_store_list');
-    final storeNameUrl = Uri.parse('http://143.248.191.173:3001/get_store_name_list');
+    final storeListUrl = Uri.parse('http://143.248.191.63:3001/get_store_list');
+    final storeNameUrl = Uri.parse('http://143.248.191.63:3001/get_store_name_list');
 
     final storeListResponse = await http.post(
       storeListUrl,
@@ -161,7 +161,7 @@ class _AdminMoneyState extends State<AdminMoney> {
   }
 
   Future<void> _fetchMembers(int storeId) async {
-    final url = Uri.parse('http://143.248.191.173:3001/get_store_members');
+    final url = Uri.parse('http://143.248.191.63:3001/get_store_members');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -186,7 +186,7 @@ class _AdminMoneyState extends State<AdminMoney> {
   }
 
   Future<void> _fetchUserWages() async {
-    final url = Uri.parse('http://143.248.191.173:3001/get_user_wage');
+    final url = Uri.parse('http://143.248.191.63:3001/get_user_wage');
     final response = await http.get(url);
     print("get_user_wage: ${response.body}");
     if (response.statusCode == 200) {
@@ -202,7 +202,7 @@ class _AdminMoneyState extends State<AdminMoney> {
   }
 
   Future<int> _fetchMemberWorkTime(int userId) async {
-    final url = Uri.parse('http://143.248.191.173:3001/get_member_work_time?user_id=$userId');
+    final url = Uri.parse('http://143.248.191.63:3001/get_member_work_time?user_id=$userId');
     final response = await http.get(
       url,
       headers: {'Content-Type': 'application/json'}

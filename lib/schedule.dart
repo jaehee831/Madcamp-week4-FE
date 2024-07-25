@@ -218,7 +218,7 @@ class _ScheduleState extends State<Schedule> {
   }
 
   Future<void> _fetchTasks(int storeId) async {
-    final url = Uri.parse('http://143.248.191.173:3001/get_tasks');
+    final url = Uri.parse('http://143.248.191.63:3001/get_tasks');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -250,7 +250,7 @@ class _ScheduleState extends State<Schedule> {
     if (taskId == 0) {
       return [];
     }
-    final url = Uri.parse('http://143.248.191.173:3001/get_user_from_task');
+    final url = Uri.parse('http://143.248.191.63:3001/get_user_from_task');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -268,7 +268,7 @@ class _ScheduleState extends State<Schedule> {
 
   Future<String> _fetchUserName(int userId) async {
     final response = await http.post(
-      Uri.parse('http://143.248.191.173:3001/get_user_name'),
+      Uri.parse('http://143.248.191.63:3001/get_user_name'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -286,7 +286,7 @@ class _ScheduleState extends State<Schedule> {
   }
 
   Future<bool> _checkIsAdmin(int userId) async {
-    final url = Uri.parse('http://143.248.191.173:3001/check_isadmin');
+    final url = Uri.parse('http://143.248.191.63:3001/check_isadmin');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
