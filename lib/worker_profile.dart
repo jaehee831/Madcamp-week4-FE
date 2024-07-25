@@ -57,13 +57,13 @@ class _WorkerProfileState extends State<WorkerProfile> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 30.0),
-              const CircleAvatar(
+              CircleAvatar(
                 radius: 70,
-                backgroundColor: Color.fromARGB(255, 240, 204, 231),
-                child: Icon(
+                backgroundColor: Colors.grey[200],
+                child: const Icon(
                   Icons.person,
                   size: 100,
-                  color: Color.fromARGB(255, 110, 109, 199),
+                  color: Colors.grey,
                 ),
               ),
               const SizedBox(height: 30.0),

@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:madcamp_week4_front/main.dart';
+
 class UserWagePage extends StatefulWidget {
   final int userId;
   final String userName;
 
-  UserWagePage({required this.userId, required this.userName});
+  const UserWagePage({super.key, required this.userId, required this.userName});
 
   @override
   _UserWagePageState createState() => _UserWagePageState();
@@ -25,7 +27,7 @@ class _UserWagePageState extends State<UserWagePage> {
     super.initState();
     _checkAdminAndFetchData();
   }
-  
+
   Future<void> _checkAdminAndFetchData() async {
     try {
       bool isAdmin = await _checkIsAdmin(widget.userId);
@@ -58,13 +60,14 @@ class _UserWagePageState extends State<UserWagePage> {
     );
     print("check_isadmin: ${response.body}");
     if (response.statusCode == 200) {
-      if(jsonDecode(response.body) == 1){
+      if (jsonDecode(response.body) == 1) {
         return true;
-      }else{
+      } else {
         return false;
       }
     } else {
-      throw Exception('Failed to check if user is admin. Status code: ${response.statusCode}');
+      throw Exception(
+          'Failed to check if user is admin. Status code: ${response.statusCode}');
     }
   }
 
@@ -144,7 +147,7 @@ class _UserWagePageState extends State<UserWagePage> {
         _hourlyRate = newRate;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Wage updated successfully')),
+        const SnackBar(content: Text('Wage updated successfully')),
       );
     } else {
       throw Exception('Failed to update hourly rate');
@@ -154,68 +157,77 @@ class _UserWagePageState extends State<UserWagePage> {
   @override
   Widget build(BuildContext context) {
     final double monthlySalary = (_hourlyRate / 60) * _totalMinutes;
-    
+
     return Scaffold(
       appBar: AppBar(
         title: Text('${widget.userName}님의 시급'),
+        backgroundColor: primaryColor,
       ),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : _isAdmin
-              ? Center(
+              ? const Center(
                   child: Text(
                     '직원 전용 페이지입니다.',
-                    style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                    style:
+                        TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                   ),
                 )
-              : Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '${widget.userName}님의 시급',
-                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(height: 20),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              controller: _controller,
-                              keyboardType: TextInputType.number,
-                              decoration: InputDecoration(
-                                labelText: '현재 시급',
-                                border: OutlineInputBorder(),
+              : Center(
+                  // Center 위젯 추가
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center, // 가운데 정렬
+                      mainAxisAlignment: MainAxisAlignment.center, // 세로 가운데 정렬
+                      children: [
+                        Text(
+                          '${widget.userName}님의 시급',
+                          style: const TextStyle(
+                              fontSize: 24, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 20),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                controller: _controller,
+                                keyboardType: TextInputType.number,
+                                decoration: const InputDecoration(
+                                  labelText: '현재 시급',
+                                  border: OutlineInputBorder(),
+                                ),
                               ),
                             ),
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.save),
-                            onPressed: () async {
-                              await _updateUserWage();
-                            },
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 20),
-                      Text(
-                        '이달의 급여',
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(height: 10),
-                      Text(
-                        '총 ${monthlySalary.toStringAsFixed(2)}원 쌓였어요',
-                        style: TextStyle(fontSize: 18, color: Colors.blue),
-                      ),
-                      SizedBox(height: 10),
-                      Text(
-                        '근무시간 총 ${(_totalMinutes / 60).toStringAsFixed(2)}시간',
-                        style: TextStyle(fontSize: 18),
+                            IconButton(
+                              icon: const Icon(Icons.save),
+                              onPressed: () async {
+                                await _updateUserWage();
+                              },
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        const Text(
+                          '이달의 급여',
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          '총 ${monthlySalary.toStringAsFixed(2)}원 쌓였어요',
+                          style:
+                              const TextStyle(fontSize: 18, color: Colors.blue),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          '근무시간 총 ${(_totalMinutes / 60).toStringAsFixed(2)}시간',
+                          style: const TextStyle(fontSize: 18),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
     );
   }
 }
