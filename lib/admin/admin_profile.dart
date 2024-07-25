@@ -69,10 +69,14 @@ class _AdminProfileState extends State<AdminProfile> {
         child: Column(
           children: [
             const SizedBox(height: 16.0),
-            const CircleAvatar(
-              radius: 80,
-              backgroundColor: Color(0xFFFFF0BA),
-              backgroundImage: AssetImage('assets/images/광대.png'),
+            CircleAvatar(
+              radius: 70,
+              backgroundColor: Colors.grey[200],
+              child: const Icon(
+                Icons.person,
+                size: 100,
+                color: Color.fromRGBO(56, 235, 205, 1),
+              ),
             ),
             const SizedBox(height: 24.0),
             FutureBuilder<String>(

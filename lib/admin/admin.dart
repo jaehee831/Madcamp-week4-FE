@@ -46,54 +46,76 @@ class Admin extends StatelessWidget {
           ),
         ],
       ),
-      body: ListView(
+      body: Column(
         children: [
-          ListTile(
-            title: const Text('시간표 수정'),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => scheduleChooseStore(userId: userId)),
-              );
-            },
+          Expanded(
+            child: ListView(
+              children: [
+                ListTile(
+                  title: const Text('시간표 수정'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              scheduleChooseStore(userId: userId)),
+                    );
+                  },
+                ),
+                const Divider(),
+                ListTile(
+                  title: const Text('출석부'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              attendanceChooseStore(userId: userId)),
+                    );
+                  },
+                ),
+                const Divider(),
+                ListTile(
+                  title: const Text('공지 작성'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              noticeChooseStore(userId: userId)),
+                    );
+                  },
+                ),
+                const Divider(),
+                ListTile(
+                  title: const Text('급여 조회'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              moneyChooseStore(userId: userId)),
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
-          const Divider(),
-          ListTile(
-            title: const Text('출석부'),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        attendanceChooseStore(userId: userId)),
-              );
-            },
-          ),
-          const Divider(),
-          ListTile(
-            title: const Text('공지 작성'),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => noticeChooseStore(userId: userId)),
-              );
-            },
-          ),
-          const Divider(),
-          ListTile(
-            title: const Text('급여 조회'),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => moneyChooseStore(userId: userId)),
-              );
-            },
+          const SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 24.0), // 하단 패딩 추가
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset('assets/images/soup.png'),
+                const SizedBox(height: 16),
+                const Text('관리자 페이지입니다'),
+              ],
+            ),
           ),
         ],
       ),

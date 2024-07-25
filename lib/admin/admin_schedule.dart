@@ -165,6 +165,7 @@ class _AdminScheduleState extends State<AdminSchedule> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('스케줄 추가')),
+      
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: fetchStoreMembers(widget.storeId),
         builder: (context, snapshot) {

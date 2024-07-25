@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:intl/intl.dart';
+import 'package:madcamp_week4_front/main.dart';
 
 class PostDetailPage extends StatefulWidget {
   final int userId;
@@ -65,8 +66,9 @@ class _PostDetailPageState extends State<PostDetailPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.postTitle),
+        backgroundColor: primaryColor,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context, true);
           },
@@ -79,18 +81,20 @@ class _PostDetailPageState extends State<PostDetailPage> {
           children: [
             Text(
               widget.postTitle,
-              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+              style:
+                  const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8.0),
             Text(
               widget.postContent,
-              style: TextStyle(fontSize: 16.0),
+              style: const TextStyle(fontSize: 16.0),
             ),
             const SizedBox(height: 16.0),
             Row(
               children: [
                 IconButton(
-                  icon: Icon(Icons.favorite, size: 16.0, color: Colors.grey),
+                  icon: const Icon(Icons.favorite,
+                      size: 16.0, color: Colors.grey),
                   onPressed: _incrementLike,
                 ),
                 const SizedBox(width: 4.0),
@@ -98,20 +102,22 @@ class _PostDetailPageState extends State<PostDetailPage> {
               ],
             ),
             const SizedBox(height: 16.0),
-            Divider(),
+            const Divider(),
             Text(
               widget.author,
-              style: TextStyle(fontSize: 14.0, color: Colors.grey),
+              style: const TextStyle(fontSize: 14.0, color: Colors.grey),
             ),
             const SizedBox(height: 8.0),
             Text(
               widget.timestamp,
-              style: TextStyle(fontSize: 14.0, color: Colors.grey),
+              style: const TextStyle(fontSize: 14.0, color: Colors.grey),
             ),
             const SizedBox(height: 16.0),
             Expanded(
               child: comments.isEmpty
-                  ? Center(child: Text('댓글이 없습니다.', style: TextStyle(fontSize: 16.0, color: Colors.grey)))
+                  ? const Center(
+                      child: Text('댓글이 없습니다.',
+                          style: TextStyle(fontSize: 16.0, color: Colors.grey)))
                   : ListView(
                       children: [
                         for (var comment in comments)
@@ -119,10 +125,11 @@ class _PostDetailPageState extends State<PostDetailPage> {
                             title: FutureBuilder<String>(
                               future: _getUserName(comment['user_id']),
                               builder: (context, snapshot) {
-                                if (snapshot.connectionState == ConnectionState.waiting) {
-                                  return Text('Loading...');
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const Text('Loading...');
                                 } else if (snapshot.hasError) {
-                                  return Text('Error');
+                                  return const Text('Error');
                                 } else {
                                   return Text(snapshot.data ?? 'Unknown');
                                 }

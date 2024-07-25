@@ -12,13 +12,12 @@ class ChannelBoardPage extends StatefulWidget {
   final int boardId;
   final String description;
 
-  const ChannelBoardPage({
-    super.key,
-    required this.userId,
-    required this.channelName,
-    required this.boardId,
-    required this.description
-  });
+  const ChannelBoardPage(
+      {super.key,
+      required this.userId,
+      required this.channelName,
+      required this.boardId,
+      required this.description});
 
   @override
   _ChannelBoardPageState createState() => _ChannelBoardPageState();
@@ -48,16 +47,17 @@ class _ChannelBoardPageState extends State<ChannelBoardPage> {
           children: [
             Text(
               widget.channelName,
-              style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+              style:
+                  const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
             ),
             Text(
               widget.description,
-              style: TextStyle(fontSize: 16.0, color: Colors.grey),
+              style: const TextStyle(fontSize: 16.0, color: Colors.grey),
             ),
             const SizedBox(height: 16.0),
             Expanded(
               child: posts.isEmpty
-                  ? Center(
+                  ? const Center(
                       child: Text(
                         '게시판에 등록된 글이 없습니다',
                         style: TextStyle(fontSize: 16.0, color: Colors.grey),
@@ -67,12 +67,14 @@ class _ChannelBoardPageState extends State<ChannelBoardPage> {
                       itemCount: posts.length,
                       itemBuilder: (context, index) {
                         final post = posts[index];
-                        final userName = userNames[post['user_id']] ?? 'Loading...';
+                        final userName =
+                            userNames[post['user_id']] ?? 'Loading...';
                         return Column(
                           children: [
                             GestureDetector(
                               onTap: () async {
-                                final author = await _getUserName(post['user_id']);
+                                final author =
+                                    await _getUserName(post['user_id']);
                                 final result = await Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -100,25 +102,29 @@ class _ChannelBoardPageState extends State<ChannelBoardPage> {
                                 width: double.infinity,
                                 padding: const EdgeInsets.all(16.0),
                                 decoration: BoxDecoration(
-                                  color: Colors.grey[200],
-                                  borderRadius: BorderRadius.circular(8.0),
+                                  color:
+                                      const Color(0xFFFFF0BA), // FFF0BA 색상으로 설정
+                                  borderRadius: BorderRadius.circular(
+                                      20.0), // borderRadius를 10으로 설정
                                 ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
                                       post['title'],
-                                      style: TextStyle(fontSize: 16.0),
+                                      style: const TextStyle(fontSize: 16.0),
                                     ),
                                     const SizedBox(height: 8.0),
                                     Text(
                                       post['content'],
-                                      style: TextStyle(fontSize: 14.0, color: Colors.grey),
+                                      style: const TextStyle(
+                                          fontSize: 14.0, color: Colors.grey),
                                     ),
                                     const SizedBox(height: 8.0),
                                     Row(
                                       children: [
-                                        Icon(Icons.favorite, size: 16.0, color: Colors.grey),
+                                        const Icon(Icons.favorite,
+                                            size: 16.0, color: Colors.grey),
                                         const SizedBox(width: 4.0),
                                         Text('${post['like_count']}'),
                                         const SizedBox(width: 16.0),
@@ -223,7 +229,8 @@ class _ChannelBoardPageState extends State<ChannelBoardPage> {
       final responseBody = jsonDecode(response.body);
       return responseBody['user_name'];
     } else {
-      throw Exception('Failed to load user name. Status code: ${response.statusCode}');
+      throw Exception(
+          'Failed to load user name. Status code: ${response.statusCode}');
     }
   }
 }
