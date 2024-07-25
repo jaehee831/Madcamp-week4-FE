@@ -2,7 +2,7 @@
     package="com.example.madcamp_week4_front">
 
     <application
-        android:label="madcamp_week4_front"
+        android:label="GigHub"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
 
