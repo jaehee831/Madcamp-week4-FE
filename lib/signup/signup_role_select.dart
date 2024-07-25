@@ -136,7 +136,7 @@ Future<void> _onWorkerConfirmPressed(
 
 Future<bool> _sendUserIdToServer(
     int userId, String nickname, int isAdmin) async {
-  final url = Uri.parse('http://143.248.191.173:3001/save_user');
+  final url = Uri.parse('http://143.248.191.63:3001/save_user');
   final response = await http.post(
     url,
     headers: <String, String>{
@@ -166,7 +166,7 @@ Future<bool> _sendUserIdToServer(
 }
 
 Future<String> _checkUserRegisterStore(int userId) async {
-  final url = Uri.parse('http://143.248.191.173:3001/get_store_list');
+  final url = Uri.parse('http://143.248.191.63:3001/get_store_list');
   final response = await http.post(
     url,
     headers: {'Content-Type': 'application/json'},

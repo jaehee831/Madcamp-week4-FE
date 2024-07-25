@@ -13,7 +13,7 @@ class AdminAttendanceDetail extends StatelessWidget {
   });
 
   Future<List<Map<String, dynamic>>> _fetchWorkDetails(int userId) async {
-    final url = Uri.parse('http://143.248.191.173:3001/get_member_work_time?user_id=$userId');
+    final url = Uri.parse('http://143.248.191.63:3001/get_member_work_time?user_id=$userId');
     final response = await http.get(
       url,
       headers: {'Content-Type': 'application/json'}
@@ -30,7 +30,7 @@ class AdminAttendanceDetail extends StatelessWidget {
   }
 
   Future<String> _fetchTotalHours(int userId) async {
-    final url = Uri.parse('http://143.248.191.173:3001/get_member_work_time?user_id=$userId');
+    final url = Uri.parse('http://143.248.191.63:3001/get_member_work_time?user_id=$userId');
     final response = await http.get(
       url,
       headers: {'Content-Type': 'application/json'}

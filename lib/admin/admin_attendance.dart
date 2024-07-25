@@ -2,20 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:madcamp_week4_front/admin/admin_attendance_detail.dart';
+import 'package:madcamp_week4_front/main.dart';
 import 'package:madcamp_week4_front/signup/mobile_logout.dart';
 
 class attendanceChooseStore extends StatefulWidget {
   final int userId;
 
-  const attendanceChooseStore({
-    super.key,
-    required this.userId
-  });
+  const attendanceChooseStore({super.key, required this.userId});
 
   @override
   _attendanceChooseStoreState createState() => _attendanceChooseStoreState();
 }
-  
+
 class _attendanceChooseStoreState extends State<attendanceChooseStore> {
   late Future<List<Map<String, dynamic>>> storeFuture;
 
@@ -26,8 +24,9 @@ class _attendanceChooseStoreState extends State<attendanceChooseStore> {
   }
 
   Future<List<Map<String, dynamic>>> _fetchStores(int userId) async {
-    final storeListUrl = Uri.parse('http://143.248.191.173:3001/get_store_list');
-    final storeNameUrl = Uri.parse('http://143.248.191.173:3001/get_store_name_list');
+    final storeListUrl = Uri.parse('http://143.248.191.63:3001/get_store_list');
+    final storeNameUrl =
+        Uri.parse('http://143.248.191.63:3001/get_store_name_list');
 
     final storeListResponse = await http.post(
       storeListUrl,
@@ -37,11 +36,12 @@ class _attendanceChooseStoreState extends State<attendanceChooseStore> {
 
     if (storeListResponse.statusCode != 200) {
       throw Exception('Failed to load store ids');
-    }else if (jsonDecode(storeListResponse.body).containsKey('message')) {
+    } else if (jsonDecode(storeListResponse.body).containsKey('message')) {
       throw Exception('No store registered');
     }
 
-    final storeIds = List<int>.from(jsonDecode(storeListResponse.body)['storeIds']);
+    final storeIds =
+        List<int>.from(jsonDecode(storeListResponse.body)['storeIds']);
     final List<Map<String, dynamic>> stores = [];
 
     for (int storeId in storeIds) {
@@ -65,6 +65,7 @@ class _attendanceChooseStoreState extends State<attendanceChooseStore> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('출석부'),
+        backgroundColor: primaryColor,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -78,11 +79,12 @@ class _attendanceChooseStoreState extends State<attendanceChooseStore> {
               logoutFromKakao(
                 onLogoutSuccess: () {
                   Navigator.popUntil(context, (route) => route.isFirst);
-                  Navigator.pushReplacementNamed(context, '/'); // 로그아웃 성공 시 메인화면으로 이동
+                  Navigator.pushReplacementNamed(
+                      context, '/'); // 로그아웃 성공 시 메인화면으로 이동
                 },
                 onLogoutFailed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
+                    const SnackBar(
                       content: Text('로그아웃 실패'),
                       duration: Duration(seconds: 2),
                     ),
@@ -113,11 +115,17 @@ class _attendanceChooseStoreState extends State<attendanceChooseStore> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => AdminAttendance(storeId: store['store_id'], userId: widget.userId),
+                          builder: (context) => AdminAttendance(
+                              storeId: store['store_id'],
+                              userId: widget.userId),
                         ),
                       );
                     },
-                    child: const Text('선택'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: primaryColor, // 버튼 색상 설정
+                    ),
+                    child:
+                        const Text('선택', style: TextStyle(color: Colors.black)),
                   ),
                 );
               }).toList(),
@@ -133,11 +141,8 @@ class AdminAttendance extends StatefulWidget {
   final int storeId;
   final int userId;
 
-  const AdminAttendance({
-    super.key,
-    required this.storeId,
-    required this.userId
-  });
+  const AdminAttendance(
+      {super.key, required this.storeId, required this.userId});
 
   @override
   _AdminAttendanceState createState() => _AdminAttendanceState();
@@ -153,7 +158,7 @@ class _AdminAttendanceState extends State<AdminAttendance> {
   }
 
   Future<void> _fetchMembers(int storeId) async {
-    final url = Uri.parse('http://143.248.191.173:3001/get_store_members');
+    final url = Uri.parse('http://143.248.191.63:3001/get_store_members');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -162,7 +167,8 @@ class _AdminAttendanceState extends State<AdminAttendance> {
     print("get_store_members: ${response.body}");
     if (response.statusCode == 200) {
       final responseBody = jsonDecode(response.body);
-      List<Map<String, dynamic>> fetchedMembers = List<Map<String, dynamic>>.from(responseBody);
+      List<Map<String, dynamic>> fetchedMembers =
+          List<Map<String, dynamic>>.from(responseBody);
       for (var member in fetchedMembers) {
         member['hours'] = await _fetchMemberWorkTime(member['user_id']);
       }
@@ -170,16 +176,16 @@ class _AdminAttendanceState extends State<AdminAttendance> {
         members = fetchedMembers;
       });
     } else {
-      throw Exception('Failed to load store members. Status code: ${response.statusCode}');
+      throw Exception(
+          'Failed to load store members. Status code: ${response.statusCode}');
     }
   }
 
   Future<String> _fetchMemberWorkTime(int userId) async {
-    final url = Uri.parse('http://143.248.191.173:3001/get_member_work_time?user_id=$userId');
-    final response = await http.get(
-      url,
-      headers: {'Content-Type': 'application/json'}
-    );
+    final url = Uri.parse(
+        'http://143.248.191.63:3001/get_member_work_time?user_id=$userId');
+    final response =
+        await http.get(url, headers: {'Content-Type': 'application/json'});
     print('get_member_work_time: ${response.body}');
     print('get_member_work_time: ${response.statusCode}');
     final responseBody = jsonDecode(response.body);
@@ -197,10 +203,13 @@ class _AdminAttendanceState extends State<AdminAttendance> {
       final hours = totalMinutes ~/ 60;
       final minutes = totalMinutes % 60;
       return '$hours시간 $minutes분';
-    }else if (responseBody.containsKey('message') && responseBody['message'] == 'No records found for the specified user_id'){
+    } else if (responseBody.containsKey('message') &&
+        responseBody['message'] ==
+            'No records found for the specified user_id') {
       return '0시간 0분';
-    }else {
-      throw Exception('Failed to load work time. Status code: ${response.statusCode}');
+    } else {
+      throw Exception(
+          'Failed to load work time. Status code: ${response.statusCode}');
     }
   }
 
@@ -209,6 +218,7 @@ class _AdminAttendanceState extends State<AdminAttendance> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('출석부'),
+        backgroundColor: primaryColor,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -222,11 +232,12 @@ class _AdminAttendanceState extends State<AdminAttendance> {
               logoutFromKakao(
                 onLogoutSuccess: () {
                   Navigator.popUntil(context, (route) => route.isFirst);
-                  Navigator.pushReplacementNamed(context, '/'); // 로그아웃 성공 시 메인화면으로 이동
+                  Navigator.pushReplacementNamed(
+                      context, '/'); // 로그아웃 성공 시 메인화면으로 이동
                 },
                 onLogoutFailed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
+                    const SnackBar(
                       content: Text('로그아웃 실패'),
                       duration: Duration(seconds: 2),
                     ),
@@ -276,6 +287,7 @@ class AttendanceListItem extends StatelessWidget {
   final String hours;
 
   const AttendanceListItem({
+    super.key,
     required this.name,
     required this.hours,
   });

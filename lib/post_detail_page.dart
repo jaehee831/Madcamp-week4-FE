@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:intl/intl.dart';
+import 'package:madcamp_week4_front/main.dart';
 
 class PostDetailPage extends StatefulWidget {
   final int userId;
@@ -50,8 +51,9 @@ class _PostDetailPageState extends State<PostDetailPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.postTitle),
+        backgroundColor: primaryColor,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context, true);
           },
@@ -64,18 +66,20 @@ class _PostDetailPageState extends State<PostDetailPage> {
           children: [
             Text(
               widget.postTitle,
-              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+              style:
+                  const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8.0),
             Text(
               widget.postContent,
-              style: TextStyle(fontSize: 16.0),
+              style: const TextStyle(fontSize: 16.0),
             ),
             const SizedBox(height: 16.0),
             Row(
               children: [
                 IconButton(
-                  icon: Icon(Icons.favorite, size: 16.0, color: Colors.grey),
+                  icon: const Icon(Icons.favorite,
+                      size: 16.0, color: Colors.grey),
                   onPressed: _incrementLike,
                 ),
                 const SizedBox(width: 4.0),
@@ -83,20 +87,22 @@ class _PostDetailPageState extends State<PostDetailPage> {
               ],
             ),
             const SizedBox(height: 16.0),
-            Divider(),
+            const Divider(),
             Text(
               widget.author,
-              style: TextStyle(fontSize: 14.0, color: Colors.grey),
+              style: const TextStyle(fontSize: 14.0, color: Colors.grey),
             ),
             const SizedBox(height: 8.0),
             Text(
               widget.timestamp,
-              style: TextStyle(fontSize: 14.0, color: Colors.grey),
+              style: const TextStyle(fontSize: 14.0, color: Colors.grey),
             ),
             const SizedBox(height: 16.0),
             Expanded(
               child: comments.isEmpty
-                  ? Center(child: Text('댓글이 없습니다.', style: TextStyle(fontSize: 16.0, color: Colors.grey)))
+                  ? const Center(
+                      child: Text('댓글이 없습니다.',
+                          style: TextStyle(fontSize: 16.0, color: Colors.grey)))
                   : ListView(
                       children: [
                         for (var comment in comments)
@@ -104,45 +110,51 @@ class _PostDetailPageState extends State<PostDetailPage> {
                             title: FutureBuilder<String>(
                               future: _getUserName(comment['user_id']),
                               builder: (context, snapshot) {
-                                if (snapshot.connectionState == ConnectionState.waiting) {
-                                  return Text('Loading...');
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const Text('Loading...');
                                 } else if (snapshot.hasError) {
-                                  return Text('Error');
+                                  return const Text('Error');
                                 } else {
                                   return Text(snapshot.data ?? 'Unknown');
                                 }
                               },
                             ),
                             subtitle: Text(comment['content']),
-                            trailing: Text(DateFormat('MM/dd HH:mm').format(DateTime.parse(comment['time']))),
+                            trailing: Text(
+                              comment['time'] != null
+                                  ? DateFormat('MM/dd HH:mm')
+                                      .format(DateTime.parse(comment['time']))
+                                  : 'N/A', // 혹은 다른 기본 값으로 대체
+                            ),
                           ),
                       ],
                     ),
             ),
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _commentController,
-                  decoration: InputDecoration(
-                    hintText: '댓글을 입력하세요',
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _commentController,
+                    decoration: const InputDecoration(
+                      hintText: '댓글을 입력하세요',
+                    ),
                   ),
                 ),
-              ),
-              IconButton(
-                icon: Icon(Icons.send),
-                onPressed: _saveComment,
-              ),
-            ],
-          ),
-        ],
+                IconButton(
+                  icon: const Icon(Icons.send),
+                  onPressed: _saveComment,
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   Future<void> _updateLikeCount() async {
-    final url = Uri.parse('http://143.248.191.173:3001/edit_like_count');
+    final url = Uri.parse('http://143.248.191.63:3001/edit_like_count');
     final response = await http.put(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -157,7 +169,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to update like count')),
+        const SnackBar(content: Text('Failed to update like count')),
       );
     }
   }
@@ -170,7 +182,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
   }
 
   Future<void> _saveComment() async {
-    final url = Uri.parse('http://143.248.191.173:3001/save_comment');
+    final url = Uri.parse('http://143.248.191.63:3001/save_comment');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -193,17 +205,17 @@ class _PostDetailPageState extends State<PostDetailPage> {
         _commentController.clear();
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Comment added successfully')),
+        const SnackBar(content: Text('Comment added successfully')),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to add comment')),
+        const SnackBar(content: Text('Failed to add comment')),
       );
     }
   }
 
   Future<String> _getUserName(int userId) async {
-    final url = Uri.parse('http://143.248.191.173:3001/get_user_name');
+    final url = Uri.parse('http://143.248.191.63:3001/get_user_name');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -215,12 +227,13 @@ class _PostDetailPageState extends State<PostDetailPage> {
       final responseBody = jsonDecode(response.body);
       return responseBody['user_name'];
     } else {
-      throw Exception('Failed to load user name. Status code: ${response.statusCode}');
+      throw Exception(
+          'Failed to load user name. Status code: ${response.statusCode}');
     }
   }
 
   Future<void> _fetchComments(int postId) async {
-    final url = Uri.parse('http://143.248.191.173:3001/get_comments');
+    final url = Uri.parse('http://143.248.191.63:3001/get_comments');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -230,7 +243,9 @@ class _PostDetailPageState extends State<PostDetailPage> {
     print("get_comments: ${response.statusCode}");
     if (response.statusCode == 200) {
       final responseBody = jsonDecode(response.body);
-      if (responseBody is Map && responseBody.containsKey('message') && responseBody['message'] == 'no comments found') {
+      if (responseBody is Map &&
+          responseBody.containsKey('message') &&
+          responseBody['message'] == 'no comments found') {
         setState(() {
           comments = [];
         });
@@ -243,6 +258,5 @@ class _PostDetailPageState extends State<PostDetailPage> {
       throw Exception('Failed to load comments');
     }
   }
-
 }
 //댓글 작성기능, post 가져오기 

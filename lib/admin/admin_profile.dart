@@ -69,10 +69,14 @@ class _AdminProfileState extends State<AdminProfile> {
         child: Column(
           children: [
             const SizedBox(height: 16.0),
-            const CircleAvatar(
-              radius: 80,
-              backgroundColor: Color(0xFFFFF0BA),
-              backgroundImage: AssetImage('assets/images/광대.png'),
+            CircleAvatar(
+              radius: 70,
+              backgroundColor: Colors.grey[200],
+              child: const Icon(
+                Icons.person,
+                size: 100,
+                color: primaryColor,
+              ),
             ),
             const SizedBox(height: 24.0),
             FutureBuilder<String>(
@@ -161,7 +165,7 @@ class _AdminProfileState extends State<AdminProfile> {
   }
 
   Future<List<int>> _getStoreList(int userId) async {
-    final url = Uri.parse('http://143.248.191.173:3001/get_store_list');
+    final url = Uri.parse('http://143.248.191.63:3001/get_store_list');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -185,7 +189,7 @@ class _AdminProfileState extends State<AdminProfile> {
   }
 
   Future<String> _getStoreName(int storeId) async {
-    final url = Uri.parse('http://143.248.191.173:3001/get_store_name_list');
+    final url = Uri.parse('http://143.248.191.63:3001/get_store_name_list');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -215,7 +219,7 @@ class _AdminProfileState extends State<AdminProfile> {
   }
 
   Future<String> _getUserName(int userId) async {
-    final url = Uri.parse('http://143.248.191.173:3001/get_user_name');
+    final url = Uri.parse('http://143.248.191.63:3001/get_user_name');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},

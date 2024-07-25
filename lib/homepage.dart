@@ -42,7 +42,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _fetchNotice() async {
-    final url = Uri.parse('http://143.248.191.173:3001/get_notice');
+    final url = Uri.parse('http://143.248.191.63:3001/get_notice');
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -59,7 +59,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<String> _fetchUserName(int userId) async {
     final response = await http.post(
-      Uri.parse('http://143.248.191.173:3001/get_user_name'),
+      Uri.parse('http://143.248.191.63:3001/get_user_name'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -79,7 +79,7 @@ class _HomePageState extends State<HomePage> {
   List<Map<String, dynamic>> _rooms = [];
 
   Future<void> _fetchRooms() async {
-    final url = Uri.parse('http://143.248.191.173:3001/get_boards');
+    final url = Uri.parse('http://143.248.191.63:3001/get_boards');
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -93,7 +93,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<List<int>> _getStoreList(int userId) async {
-    final url = Uri.parse('http://143.248.191.173:3001/get_store_list');
+    final url = Uri.parse('http://143.248.191.63:3001/get_store_list');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -117,7 +117,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<String> _getStoreName(int storeId) async {
-    final url = Uri.parse('http://143.248.191.173:3001/get_store_name_list');
+    final url = Uri.parse('http://143.248.191.63:3001/get_store_name_list');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -249,16 +249,16 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _navigateToChannelBoard(BuildContext context, int userId, String channelName, int boardId, String description) {
+  void _navigateToChannelBoard(BuildContext context, int userId,
+      String channelName, int boardId, String description) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => ChannelBoardPage(
-          userId: userId,
-          channelName: channelName,
-          boardId: boardId,
-          description: description
-        ),
+            userId: userId,
+            channelName: channelName,
+            boardId: boardId,
+            description: description),
       ),
     );
   }
@@ -318,74 +318,84 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              decoration: const BoxDecoration(
-                color: primaryColor,
-              ),
-              child: GestureDetector(
-                onTap: () => _showChannelChangePopup(context),
-                child: const Row(
-                  children: [
-                    Icon(Icons.swap_horiz),
-                    SizedBox(width: 8.0),
-                    Text(
-                      '채널 변경',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 24,
+        child: Container(
+          color: Colors.white,
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              DrawerHeader(
+                decoration: const BoxDecoration(
+                  color: primaryColor,
+                ),
+                child: GestureDetector(
+                  onTap: () => _showChannelChangePopup(context),
+                  child: const Row(
+                    children: [
+                      Icon(Icons.swap_horiz),
+                      SizedBox(width: 8.0),
+                      Text(
+                        '채널 변경',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 24,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
-            ..._rooms.map((room) => ListTile(
-                  leading: const Icon(Icons.group),
-                  title: Text(room['title'] ?? '방 이름 없음'),
-                  onTap: () => _navigateToChannelBoard(
-                      context, widget.userId, room['title'] ?? '방 이름 없음', room['idboard'], room['description']), // null 값을 처리
-                )),
-            ListTile(
-              leading: const Icon(Icons.add),
-              title: const Text('방 추가하기'),
-              onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return RoomDialog(
-                      onRoomAdded: () {
-                        _fetchRooms();
-                      },
-                    );
-                  },
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.logout),
-              title: const Text('로그아웃'),
-              onTap: () {
-                logoutFromKakao(
-                  onLogoutSuccess: () {
-                    Navigator.popUntil(context, (route) => route.isFirst);
-                    Navigator.pushReplacementNamed(
-                        context, '/'); // 로그아웃 성공 시 메인 화면으로 이동
-                  },
-                  onLogoutFailed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('로그아웃 실패'),
-                        duration: Duration(seconds: 2),
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
-          ],
+              ..._rooms.map((room) => ListTile(
+                    leading: const Icon(Icons.group),
+                    title: Text(room['title'] ?? '방 이름 없음'),
+                    tileColor: Colors.white,
+                    onTap: () => _navigateToChannelBoard(
+                        context,
+                        widget.userId,
+                        room['title'] ?? '방 이름 없음',
+                        room['idboard'],
+                        room['description']), // null 값을 처리
+                  )),
+              ListTile(
+                leading: const Icon(Icons.add),
+                title: const Text('방 추가하기'),
+                tileColor: Colors.white,
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return RoomDialog(
+                        onRoomAdded: () {
+                          _fetchRooms();
+                        },
+                      );
+                    },
+                  );
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.logout),
+                title: const Text('로그아웃'),
+                tileColor: Colors.white,
+                onTap: () {
+                  logoutFromKakao(
+                    onLogoutSuccess: () {
+                      Navigator.popUntil(context, (route) => route.isFirst);
+                      Navigator.pushReplacementNamed(
+                          context, '/'); // 로그아웃 성공 시 메인 화면으로 이동
+                    },
+                    onLogoutFailed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('로그아웃 실패'),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
       body: Padding(
@@ -405,7 +415,7 @@ class _HomePageState extends State<HomePage> {
                 padding: const EdgeInsets.all(24.0),
                 decoration: BoxDecoration(
                   color: Colors.grey[200],
-                  borderRadius: BorderRadius.circular(16.0),
+                  borderRadius: BorderRadius.circular(20.0),
                 ),
                 child: Text(
                   _notice,
@@ -440,7 +450,7 @@ class _HomePageState extends State<HomePage> {
                 padding: const EdgeInsets.all(16.0),
                 decoration: BoxDecoration(
                   color: Colors.grey[200],
-                  borderRadius: BorderRadius.circular(16.0),
+                  borderRadius: BorderRadius.circular(20.0),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -451,26 +461,30 @@ class _HomePageState extends State<HomePage> {
                     ),
                     const SizedBox(height: 16.0),
                     if (tasks.isEmpty ||
-                      tasks.where((task) => DateTime.parse(task['start_time']).day == DateTime.now().day).isEmpty)
-                    Text(
-                      '오늘 배정된 task가 없습니다.',
-                      style: TextStyle(fontSize: 14.0, color: Colors.grey),
-                    )
-                  else
-                    for (var task in tasks)
-                      if (DateTime.parse(task['start_time']).day ==
-                          DateTime.now().day)
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '${task['start_time'].substring(11, 16)}~${task['end_time'].substring(11, 16)}  ${task['task_name']}',
-                              style: const TextStyle(
-                                  fontSize: 14.0, color: Colors.black),
-                            ),
-                            const SizedBox(height: 4.0),
-                          ],
-                        ),
+                        tasks
+                            .where((task) =>
+                                DateTime.parse(task['start_time']).day ==
+                                DateTime.now().day)
+                            .isEmpty)
+                      const Text(
+                        '오늘 배정된 task가 없습니다.',
+                        style: TextStyle(fontSize: 14.0, color: Colors.grey),
+                      )
+                    else
+                      for (var task in tasks)
+                        if (DateTime.parse(task['start_time']).day ==
+                            DateTime.now().day)
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '${task['start_time'].substring(11, 16)}~${task['end_time'].substring(11, 16)}  ${task['task_name']}',
+                                style: const TextStyle(
+                                    fontSize: 14.0, color: Colors.black),
+                              ),
+                              const SizedBox(height: 4.0),
+                            ],
+                          ),
                   ],
                 ),
               ),
@@ -486,15 +500,15 @@ class _HomePageState extends State<HomePage> {
                   TextButton(
                     onPressed: () async {
                       String userName = await _fetchUserName(widget.userId);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => UserWagePage(
-                          userId: widget.userId,
-                          userName: userName,
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => UserWagePage(
+                            userId: widget.userId,
+                            userName: userName,
+                          ),
                         ),
-                      ),
-                    );
+                      );
                     },
                     child: const Text('더보기'),
                   ),
@@ -506,7 +520,7 @@ class _HomePageState extends State<HomePage> {
                 padding: const EdgeInsets.all(16.0),
                 decoration: BoxDecoration(
                   color: Colors.grey[200],
-                  borderRadius: BorderRadius.circular(8.0),
+                  borderRadius: BorderRadius.circular(20.0),
                 ),
                 child: FutureBuilder<bool>(
                   future: _checkIsAdmin(widget.userId),
@@ -652,7 +666,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _fetchUserWages() async {
-    final url = Uri.parse('http://143.248.191.173:3001/get_user_wage');
+    final url = Uri.parse('http://143.248.191.63:3001/get_user_wage');
     final response = await http.get(url);
     if (response.statusCode == 200) {
       final responseBody = jsonDecode(response.body);
@@ -671,7 +685,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<int> _fetchMemberWorkTime(int userId) async {
     final url = Uri.parse(
-        'http://143.248.191.173:3001/get_member_work_time?user_id=$userId');
+        'http://143.248.191.63:3001/get_member_work_time?user_id=$userId');
     final response =
         await http.get(url, headers: {'Content-Type': 'application/json'});
     print('get_member_work_time: ${response.body}');
@@ -700,7 +714,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _fetchTasks(int storeId) async {
-    final url = Uri.parse('http://143.248.191.173:3001/get_tasks');
+    final url = Uri.parse('http://143.248.191.63:3001/get_tasks');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -730,7 +744,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<bool> _checkIsAdmin(int userId) async {
-    final url = Uri.parse('http://143.248.191.173:3001/check_isadmin');
+    final url = Uri.parse('http://143.248.191.63:3001/check_isadmin');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -752,7 +766,7 @@ class _HomePageState extends State<HomePage> {
 
 class RoomDialog extends StatefulWidget {
   final VoidCallback onRoomAdded;
-  RoomDialog({required this.onRoomAdded});
+  const RoomDialog({super.key, required this.onRoomAdded});
 
   @override
   _RoomDialogState createState() => _RoomDialogState();
@@ -773,7 +787,7 @@ class _RoomDialogState extends State<RoomDialog> {
       return;
     }
 
-    final url = Uri.parse('http://143.248.191.173:3001/add_board');
+    final url = Uri.parse('http://143.248.191.63:3001/add_board');
     print('Adding room with name: $name and description: $description');
     final response = await http.post(
       url,
