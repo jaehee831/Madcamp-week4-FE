@@ -65,7 +65,7 @@
 ## 🫠 마이페이지
 
 <p align="center">
-    <img src="https://github.com/user-attachments/assets/c207eb05-51d6-48fa-9da7-fbcefc8f797f" alt="6,9" width="600"/>
+    <img src="https://github.com/user-attachments/assets/c207eb05-51d6-48fa-9da7-fbcefc8f797f" alt="6,9" width="800"/>
 </p>
 
 
@@ -112,7 +112,7 @@
 ## 🫠 홈화면 / 게시판
 
 <p align="center">
-    <img src="https://github.com/user-attachments/assets/58fbe0e8-7374-4503-8823-cb864c8e38b9" alt="10,13" width="600"/>
+    <img src="https://github.com/user-attachments/assets/58fbe0e8-7374-4503-8823-cb864c8e38b9" alt="10,13" width="800"/>
 </p>
 
 
@@ -172,7 +172,7 @@
 ### ERD
 
 <p align="center">
-    <img src="https://github.com/user-attachments/assets/f9e136a3-3655-4eda-9bb3-b63585c5173b" alt="erd" width="350"/>
+    <img src="https://github.com/user-attachments/assets/f9e136a3-3655-4eda-9bb3-b63585c5173b" alt="erd" width="400"/>
 </p>
 
 
