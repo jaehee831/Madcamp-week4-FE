@@ -25,27 +25,18 @@
 
 # Team
 
-이은영
-
-KAIST 22학번 
-
-Frontend
-
-https://github.com/eunyoung-1118
-
-이재희
-
-GIST 21학번
-
-Backend
-
-https://github.com/jaehee831
+| 이름     | 역할      | GitHub 링크                          |
+|----------|-----------|--------------------------------------|
+| 이은영   | Frontend  | [eunyoung-1118](https://github.com/eunyoung-1118) |
+| 이재희   | Backend   | [jaehee831](https://github.com/jaehee831) |
 
 # 기능
 
 ## 🫠 스플래시/로그인
 
-<img src="https://github.com/user-attachments/assets/7dda5d43-6412-42f9-a8b1-e222f51ba720" alt="1,2" width="400"/>
+<div style="text-align: center;">
+    <img src="https://github.com/user-attachments/assets/7dda5d43-6412-42f9-a8b1-e222f51ba720" alt="1,2" width="800"/>
+</div>
 
 
 
@@ -171,7 +162,7 @@ https://github.com/jaehee831
 
 ### ERD
 
-![erd](https://github.com/user-attachments/assets/f9e136a3-3655-4eda-9bb3-b63585c5173b)
+<img src="https://github.com/user-attachments/assets/f9e136a3-3655-4eda-9bb3-b63585c5173b" alt="erd" width="400"/>
 
 
 
