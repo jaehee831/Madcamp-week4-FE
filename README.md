@@ -137,7 +137,7 @@ https://github.com/jaehee831
 
 ## 🫠 하단 네비게이션 바
 
-<img src="https://github.com/user-attachments/assets/4be7fae8-1fe7-4af8-81a2-1ce4670b59fe" alt="14,15" width="400"/>
+![14,15](https://github.com/user-attachments/assets/4be7fae8-1fe7-4af8-81a2-1ce4670b59fe)
 
 ### 멤버 탭
 
@@ -171,7 +171,7 @@ https://github.com/jaehee831
 
 ### ERD
 
-<img src="https://github.com/user-attachments/assets/f9e136a3-3655-4eda-9bb3-b63585c5173b" alt="erd" width="300"/>
+![erd](https://github.com/user-attachments/assets/f9e136a3-3655-4eda-9bb3-b63585c5173b)
 
 
 
