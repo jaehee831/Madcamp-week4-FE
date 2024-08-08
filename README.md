@@ -1,3 +1,4 @@
+- backend link: https://github.com/jaehee831/gighub-be
 # GigHub - 점주와 알바생의 협업 플랫폼
 
 <p align="center">
