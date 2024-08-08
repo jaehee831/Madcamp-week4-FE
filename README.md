@@ -34,9 +34,9 @@
 
 ## 🫠 스플래시/로그인
 
-<div style="text-align: center;">
+<p align="center">
     <img src="https://github.com/user-attachments/assets/7dda5d43-6412-42f9-a8b1-e222f51ba720" alt="1,2" width="800"/>
-</div>
+</p>
 
 
 
