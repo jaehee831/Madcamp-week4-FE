@@ -1,6 +1,8 @@
 # GigHub - 점주와 알바생의 협업 플랫폼
 
-![-1](https://github.com/user-attachments/assets/9ee68c9e-bc34-46f0-81e7-eaeace8d3cdd)
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/9ee68c9e-bc34-46f0-81e7-eaeace8d3cdd">
+</p>
 
 > **알바천국, 알바몬…** 모두 알바를 구하는 대학생들이라면 한 번쯤 들어봤을, 익숙한 이름들!
 > 하지만 알바를 시작하고 나면, 어떤 플랫폼을 쓰나요?
