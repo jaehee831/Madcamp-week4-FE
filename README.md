@@ -19,7 +19,9 @@
 
 # GigHub
 
-![0](https://github.com/user-attachments/assets/c11cbe78-0d0f-417d-aa8e-04ad17a7dc1c)
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/c11cbe78-0d0f-417d-aa8e-04ad17a7dc1c">
+</p>
 
 일용직 노동자를 뜻하는 🧑‍🏭**Gig worker**, 이들이 모인 🌐**Hub** 
 
@@ -37,9 +39,8 @@
 ## 🫠 스플래시/로그인
 
 <p align="center">
-    <img src="https://github.com/user-attachments/assets/7dda5d43-6412-42f9-a8b1-e222f51ba720" alt="1,2" width="800"/>
+    <img src="https://github.com/user-attachments/assets/7dda5d43-6412-42f9-a8b1-e222f51ba720" alt="1,2" width="600"/>
 </p>
-
 
 
 
@@ -50,9 +51,9 @@
   - `user` 테이블의 `isadmin` 컬럼이 1이면 점주로 구분됩니다.
 
     
-
-<img src="https://github.com/user-attachments/assets/acb26c15-8a14-4cb0-91fb-6fe5b0186bde" alt="3,5" width="400"/>
-
+<p align="center">
+    <img src="https://github.com/user-attachments/assets/acb26c15-8a14-4cb0-91fb-6fe5b0186bde" alt="3,5" width="600"/>
+</p>
 
 
 - 점주의 경우 가게를 등록할 수 있으며, 새 가게 채널이 형성되면 서버는 unique한 가게 암호를 반환합니다.
@@ -63,7 +64,9 @@
 
 ## 🫠 마이페이지
 
-<img src="https://github.com/user-attachments/assets/c207eb05-51d6-48fa-9da7-fbcefc8f797f" alt="6,9" width="400"/>
+<p align="center">
+    <img src="https://github.com/user-attachments/assets/c207eb05-51d6-48fa-9da7-fbcefc8f797f" alt="6,9" width="600"/>
+</p>
 
 
 
@@ -108,7 +111,9 @@
 
 ## 🫠 홈화면 / 게시판
 
-<img src="https://github.com/user-attachments/assets/58fbe0e8-7374-4503-8823-cb864c8e38b9" alt="10,13" width="400"/>
+<p align="center">
+    <img src="https://github.com/user-attachments/assets/58fbe0e8-7374-4503-8823-cb864c8e38b9" alt="10,13" width="600"/>
+</p>
 
 
 
@@ -130,7 +135,9 @@
 
 ## 🫠 하단 네비게이션 바
 
-![14,15](https://github.com/user-attachments/assets/4be7fae8-1fe7-4af8-81a2-1ce4670b59fe)
+<p align="center">
+    <img src="https://github.com/user-attachments/assets/4be7fae8-1fe7-4af8-81a2-1ce4670b59fe" alt="14,15" width="600"/>
+</p>
 
 ### 멤버 탭
 
@@ -164,8 +171,9 @@
 
 ### ERD
 
-<img src="https://github.com/user-attachments/assets/f9e136a3-3655-4eda-9bb3-b63585c5173b" alt="erd" width="400"/>
-
+<p align="center">
+    <img src="https://github.com/user-attachments/assets/f9e136a3-3655-4eda-9bb3-b63585c5173b" alt="erd" width="350"/>
+</p>
 
 
 # 느낀 점
